@@ -1,0 +1,167 @@
+      body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Orbitron', sans-serif; 
+            background-color: #f0f0f0;
+        }
+        .navbar {
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            height: 70px; 
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            margin-left: auto; 
+        }
+        .navbar-right img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .navbar-right span {
+            font-size: 12px;
+        }
+        .container {
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 28px; 
+            position: relative;
+            overflow: hidden; 
+            white-space: nowrap;
+        }
+        .animated-line {
+            width: 50%; 
+            height: 4px; 
+            background-color: #000; 
+            margin: 10px auto;
+            animation: draw-line 5s forwards; 
+            position: relative;
+        }
+
+        @keyframes draw-line {
+            0% {
+                width: 0; 
+            }
+            100% {
+                width: 50%; 
+            }
+        }
+     * {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+       }
+        .underline {
+            display: inline-block; 
+            width: 2px;
+            height: 28px; 
+            background-color: #000; 
+            margin-left: 5px; 
+            animation: blink-caret 0.75s step-end infinite; 
+            position: absolute; 
+            right: 0; 
+        }
+
+        @keyframes blink-caret {
+            from, to {
+                background-color: transparent; 
+            }
+            50% {
+                background-color: black; 
+            }
+        }
+
+        table {
+            margin: 20px auto;
+            width: 30%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        table th, table td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        table th {
+            background-color: #333;
+            color: #fff;
+        }
+        .social-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px; 
+            background-color: rgba(0, 0, 0, 0.8); 
+            backdrop-filter: blur(5px); 
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px; 
+            border-top: 1px solid #ccc;
+        }
+        .social-bar a {
+            margin: 0 10px; 
+            color: white; 
+            text-decoration: none;
+            font-size: 20px; 
+        }
+
+       .dropdown-container {
+    margin: 20px auto;
+    padding: 10px;
+    width: 320px;
+    background-color: #333; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+.dropdown-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    padding: 10px;
+    background-color: #333; 
+    color: #fff; 
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+   .dropdown-header:hover {
+            background-color: #222;
+        }
+        .dropdown-content {
+            display: none;
+            padding: 10px 0;
+            color: #fff;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #444; 
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #333; 
+        }
+        .arrow {
+            transition: transform 0.3s;
+            color: #fff; 
+        }
+        .open .arrow {
+            transform: rotate(90deg);
+        }
