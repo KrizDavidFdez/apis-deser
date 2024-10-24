@@ -1387,10 +1387,251 @@ async function TikTokVoice(text, voice) {
     return null;
 }
 
+async function getSpotifyDetails(url) {
+    try {
+        const isPlaylist = url.includes('/playlist/');
+        const isAlbum = url.includes('/album/');
+        const id = url.split('/').pop().split('?')[0];
+        const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + Buffer.from(`acc6302297e040aeb6e4ac1fbdfd62c3:0e8439a1280a43aba9a5bc0a16f3f009`).toString('base64'),
+            },
+            body: 'grant_type=client_credentials',
+        });
+        const tokenData = await tokenResponse.json();
+        const accessToken = tokenData.access_token;
+        if (isPlaylist) {
+            const playlistResponse = await fetch(`https://api.spotify.com/v1/playlists/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+            const playlistData = await playlistResponse.json();
+            const trackInfo = playlistData.tracks.items.map(track => ({
+                name: track.track.name,
+                url: track.track.external_urls.spotify,
+            }));
+
+            const imageUrls = playlistData.images.map(image => image.url);
+
+            return {
+                creator: "@Samush$_",
+                name: playlistData.name,
+                type: playlistData.type,
+                id: playlistData.id,
+                images: imageUrls,
+                description: playlistData.description,
+                followers: playlistData.followers.total,
+                owner: playlistData.owner.display_name,
+                tracks: {
+                    trackss: trackInfo,
+                    total: playlistData.tracks.total,
+                },
+            };
+        } else if (isAlbum) {
+            const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+            const albumData = await albumResponse.json();
+
+            const image640 = albumData.images.find(image => image.height === 640 && image.width === 640)?.url;
+            const tracks = albumData.tracks.items.map(track => ({
+                name: track.name,
+                url: track.external_urls.spotify,
+            }));
+
+            return {
+                creator: "@Samush$_",
+                name: albumData.name,
+                id: albumData.id,
+                thumbnail: image640,
+                published: albumData.release_date,
+                type: albumData.album_type,
+                total_tracks: albumData.total_tracks,
+                spotify_url: albumData.external_urls.spotify,
+                artists: albumData.artists.map(artist => ({
+                    name: artist.name,
+                    url: artist.external_urls.spotify,
+                })),
+                tracks,
+            };
+        }
+    } catch (error) {
+        
+    }
+}
+
+async function threadsDL(url) {
+    try {
+         var server = await fetch(`https://api.threadsphotodownloader.com/v2/media?url=${url}`, {
+            method: 'GET',
+            headers: {
+
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        })
+        var svrs = await server.json()
+        return {
+            creator: "@Samush$_",
+            images: svrs.image_urls || [],
+            videos: svrs.video_urls ? svrs.video_urls.map(video => video.download_url) : []
+        }
+    } catch (error) {
+    }}
+    
+    async function tumblr(url) {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Credentials': 'true',
+        },
+        body: JSON.stringify({ url }) 
+    };
+    try {
+        const response = await fetch('https://getindevice.com/wp-json/aio-dl/video-data/', options);
+        const data = await response.json(); 
+        let enlaces = [];
+
+        if (data && data.medias) {
+            data.medias.forEach(media => {
+         if (media.extension === 'gifv' || media.url.endsWith('.gifv')) {
+          const gifUrl = media.url.replace('.gifv', '.gif');
+           enlaces.push(gifUrl); 
+                }
+                
+            });
+        }
+        return enlaces
+    } catch (error) {
+        
+    }
+}
+
+async function CapCutDl(link) {
+    try {
+        var response = await axios.post('https://vidburner.com/wp-json/aio-dl/video-data/', {
+            url: link, 
+            format: 'mp4'
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': 'https://vidburner.com'
+            }
+        })
+        var info = response.data
+        var title = info.title
+        var thumbnail = info.thumbnail
+        var video = info.medias[0]?.url
+        var formattedSize = info.medias[0]?.formattedSize
+        return {
+            creator: "@Samush$_",
+            title,
+            thumbnail,
+            size: formattedSize,
+            video
+        }
+    } catch (error) {
+    }}
+
+async function VimeoDL(link) {
+    try {
+        const response = await axios.post('https://snapfrom.com/wp-json/aio-dl/video-data/', null, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            params: {
+                url: link 
+            }
+        })
+        const data = response.data;
+        return {
+            creator: "@Samush$_",
+            title: data.title,
+            thumbnail: data.thumbnail,
+            duration: data.duration,
+            url: data.url,
+            medias: data.medias.map(media => ({
+                url: media.url,
+                formattedSize: media.formattedSize,
+                quality: media.quality
+            })),
+        };
+    } catch (error) {
+   }}
+
 const port = 5001;
 app.listen(port, () => {
   console.log('Servidor iniciado en el puerto', port);
 });
+
+app.get('/starlight/vimeo-DL', async (req, res) => {
+    const url = req.query.url
+    if (!url) {
+        return res.status(400).json({ error: 'falta parametro url' }); 
+    }
+    try {
+        const result = await VimeoDL(url);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).send(JSON.stringify(result, null, 4)); 
+    } catch (error) {
+        res.status(500).json({ error: '://' });
+    }
+});
+
+app.get('/starlight/capcut-DL', async (req, res) => {
+    const url = req.query.url
+    if (!url) {
+        return res.status(400).json({ error: 'falta parametro url' });
+    }
+    try {
+        const result = await CapCutDl(url);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).send(JSON.stringify(result, null, 4))
+    } catch (error) {
+        res.status(500).json({ error: '://' })
+    }
+})
+
+app.get('/starlight/spotify-albums-list', async (req, res) => {
+    const url = req.query.url;
+    if (!url) {
+        return res.status(400).json({ error: 'falta el parametro url' }); 
+    }
+    try {
+        const details = await getSpotifyDetails(url);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).send(JSON.stringify(details, null, 4)); 
+    } catch (error) {
+        res.status(500).json({ error: '://' });
+    }
+});
+
+app.get('/starlight/threads-DL', async (req, res) => {
+    const url = req.query.url;
+    if (!url) {
+        return res.status(400).json({ error: 'falta parametro url' }); 
+    }
+    try {
+        const result = await threadsDL(url);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).send(JSON.stringify(result, null, 4));
+    } catch (error) {
+        res.status(500).json({ error: '://' });
+    }
+});
+
 
 app.get('/starlight/Tiktok-voices', async (req, res) => {
     const text = req.query.text || null;
