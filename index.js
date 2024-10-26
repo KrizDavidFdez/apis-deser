@@ -1132,7 +1132,7 @@ async function scrapeAgeGuess(imageUrl) {
     
     const percentageStyle = $('.skill.html').attr('style')
     const percentage = percentageStyle ? percentageStyle.match(/width:(\d+\.?\d*)%/)?.[1] : ''
-    const roundedPercentage = percentage !== 'N/A' ? Math.round(parseFloat(percentage)) : 'N/A'
+    const roundedPercentage = percentage !== '' ? Math.round(parseFloat(percentage)) : ''
     return {
       creator: "@Samush_$",
       result: {
@@ -1388,84 +1388,88 @@ async function TikTokVoice(text, voice) {
 }
 
 async function getSpotifyDetails(url) {
-    try {
-        const isPlaylist = url.includes('/playlist/');
-        const isAlbum = url.includes('/album/');
-        const id = url.split('/').pop().split('?')[0];
-        const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Basic ' + Buffer.from(`acc6302297e040aeb6e4ac1fbdfd62c3:0e8439a1280a43aba9a5bc0a16f3f009`).toString('base64'),
-            },
-            body: 'grant_type=client_credentials',
-        });
-        const tokenData = await tokenResponse.json();
-        const accessToken = tokenData.access_token;
-        if (isPlaylist) {
-            const playlistResponse = await fetch(`https://api.spotify.com/v1/playlists/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-            });
-            const playlistData = await playlistResponse.json();
-            const trackInfo = playlistData.tracks.items.map(track => ({
-                name: track.track.name,
-                url: track.track.external_urls.spotify,
-            }));
+  try {
+    const isPlaylist = url.includes('/playlist/');
+    const isAlbum = url.includes('/album/');
+    const id = url.split('/').pop().split('?')[0];
+    const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + Buffer.from(`acc6302297e040aeb6e4ac1fbdfd62c3:0e8439a1280a43aba9a5bc0a16f3f009`).toString('base64'),
+      },
+      body: 'grant_type=client_credentials',
+    });
+    const tokenData = await tokenResponse.json();
+    const accessToken = tokenData.access_token;
+    
+    if (isPlaylist) {
+      const playlistResponse = await fetch(`https://api.spotify.com/v1/playlists/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
+      const playlistData = await playlistResponse.json();
+      const trackInfo = playlistData.tracks.items
+        .filter(item => item.track) 
+        .map(item => ({
+          name: item.track.name,
+          url: item.track.external_urls.spotify,
+        }));
 
-            const imageUrls = playlistData.images.map(image => image.url);
+      const imageUrls = playlistData.images.map(image => image.url);
 
-            return {
-                creator: "@Samush$_",
-                name: playlistData.name,
-                type: playlistData.type,
-                id: playlistData.id,
-                images: imageUrls,
-                description: playlistData.description,
-                followers: playlistData.followers.total,
-                owner: playlistData.owner.display_name,
-                tracks: {
-                    trackss: trackInfo,
-                    total: playlistData.tracks.total,
-                },
-            };
-        } else if (isAlbum) {
-            const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-            });
-            const albumData = await albumResponse.json();
+      return {
+        creator: "@Samush$_",
+        name: playlistData.name,
+        type: playlistData.type,
+        id: playlistData.id,
+        images: imageUrls,
+        description: playlistData.description,
+        followers: playlistData.followers.total,
+        owner: playlistData.owner.display_name,
+        tracks: {
+          trackss: trackInfo,
+          total: playlistData.tracks.total,
+        },
+      };
+    } else if (isAlbum) {
+      const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
+      const albumData = await albumResponse.json();
 
-            const image640 = albumData.images.find(image => image.height === 640 && image.width === 640)?.url;
-            const tracks = albumData.tracks.items.map(track => ({
-                name: track.name,
-                url: track.external_urls.spotify,
-            }));
+      const image640 = albumData.images.find(image => image.height === 640 && image.width === 640)?.url;
+      const tracks = albumData.tracks.items.map(track => ({
+        name: track.name,
+        url: track.external_urls.spotify,
+      }));
 
-            return {
-                creator: "@Samush$_",
-                name: albumData.name,
-                id: albumData.id,
-                thumbnail: image640,
-                published: albumData.release_date,
-                type: albumData.album_type,
-                total_tracks: albumData.total_tracks,
-                spotify_url: albumData.external_urls.spotify,
-                artists: albumData.artists.map(artist => ({
-                    name: artist.name,
-                    url: artist.external_urls.spotify,
-                })),
-                tracks,
-            };
-        }
-    } catch (error) {
-        
+      return {
+        creator: "@Samush$_",
+        name: albumData.name,
+        id: albumData.id,
+        thumbnail: image640,
+        published: albumData.release_date,
+        type: albumData.album_type,
+        total_tracks: albumData.total_tracks,
+        spotify_url: albumData.external_urls.spotify,
+        artists: albumData.artists.map(artist => ({
+          name: artist.name,
+          url: artist.external_urls.spotify,
+        })),
+        tracks,
+      };
     }
+  } catch (error) {
+    return { error: "://" };
+  }
 }
+
 
 async function threadsDL(url) {
     try {
@@ -1567,10 +1571,170 @@ async function VimeoDL(link) {
     } catch (error) {
    }}
 
+async function Igstorys(username) {
+  try {
+    var server = await fetch(`https://anonyig.com/api/ig/story?url=https%3A%2F%2Fwww.instagram.com%2Fstories%2F${username}%2F`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'cf-cache-status': 'DYNAMIC',
+        'cf-ray': '8d85a7a8f8a61e92-EZE',
+        'content-encoding': 'gzip',
+        'content-type': 'application/json; charset=utf-8'
+      }
+    })
+    var data = await server.json()
+    var urls = data.result.map(story => {
+      if (story.video_versions) {
+        return { url: story.video_versions[0].url }
+      } else {
+        return { url: story.image_versions2.candidates[0].url }
+      }
+    })
+    return { creator: "@Samush$_", urls: urls }
+  } catch (error) {
+    return { error: "://" }
+  }
+}
+
+async function ytdls(url) {
+  var ejec = (url) => (url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=))([a-zA-Z0-9_-]{11})/) || [])[1];
+  var sizes = (bytes) => bytes >= 1073741824 ? (bytes / 1073741824).toFixed(2) + ' GB' : bytes >= 1048576 ? (bytes / 1048576).toFixed(2) + ' MB' : bytes >= 1024 ? (bytes / 1024).toFixed(2) + ' KB' : bytes + ' B';
+  var timestamp = (seconds) => [
+    Math.floor(seconds / 3600) > 0 ? String(Math.floor(seconds / 3600)).padStart(2, '0') : null,
+    String(Math.floor((seconds % 3600) / 60)).padStart(2, '0'),
+    String(seconds % 60).padStart(2, '0')
+  ].filter(Boolean).join(':')
+  var videoId = ejec(url)
+  var thumb_urls = {
+    high: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+    medium: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+  }
+  try {
+    await Promise.all(Object.keys(thumb_urls).map(async (quality) => {
+    var json = await fetch(thumb_urls[quality], { method: 'HEAD' })
+   thumb_urls[quality] = json.ok ? thumb_urls[quality] : null
+    }))
+    var server = await fetch('https://flv-to.com/api/init', {
+      method: 'POST',
+      headers: {
+        'cache-control': 'public, max-age=31536000, stale-if-error=60',
+        'content-type': 'application/json; charset=utf-8',
+        'Accept': 'application/json, text/plain, */*',
+        'User-Agent': 'Mozilla/5.0 (Linux; U; Android 12; es; moto g22 Build/STAS32.79-77-28-63-3) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/110.0.0.0 Mobile Safari/537.36',
+        'Referer': 'https://flv-to.com/en13/download'
+      },
+      body: JSON.stringify({ videoId, serviceId: "yt", formatId: 1 })
+    })
+    var io = await server.json()
+    return {
+      creator: "@Samush$_",
+      title: io.title,
+      thumbnails: { high: thumb_urls.high, medium: thumb_urls.medium },
+      duration: timestamp(io.duration),
+      size: sizes(io.fileSize),
+      dl_url: io.downloadLink
+    }
+  } catch (error) {
+    return { error: '://' }
+  }
+}
+
+async function ytvs(url) {
+  var ejec = (url) => (url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=))([a-zA-Z0-9_-]{11})/) || [])[1];
+  var sizes = (bytes) => bytes >= 1073741824 ? (bytes / 1073741824).toFixed(2) + ' GB' : bytes >= 1048576 ? (bytes / 1048576).toFixed(2) + ' MB' : bytes >= 1024 ? (bytes / 1024).toFixed(2) + ' KB' : bytes + ' B';
+  var timestamp = (seconds) => [
+    Math.floor(seconds / 3600) > 0 ? String(Math.floor(seconds / 3600)).padStart(2, '0') : null,
+    String(Math.floor((seconds % 3600) / 60)).padStart(2, '0'),
+    String(seconds % 60).padStart(2, '0')
+  ].filter(Boolean).join(':')
+  var videoId = ejec(url)
+  var thumb_urls = {
+    high: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+    medium: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+  }
+  try {
+    await Promise.all(Object.keys(thumb_urls).map(async (quality) => {
+    var json = await fetch(thumb_urls[quality], { method: 'HEAD' })
+   thumb_urls[quality] = json.ok ? thumb_urls[quality] : null
+    }))
+    var server = await fetch('https://flv-to.com/api/init', {
+      method: 'POST',
+      headers: {
+        'cache-control': 'public, max-age=31536000, stale-if-error=60',
+        'content-type': 'application/json; charset=utf-8',
+        'Accept': 'application/json, text/plain, */*',
+        'User-Agent': 'Mozilla/5.0 (Linux; U; Android 12; es; moto g22 Build/STAS32.79-77-28-63-3) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/110.0.0.0 Mobile Safari/537.36',
+        'Referer': 'https://flv-to.com/en13/download'
+      },
+      body: JSON.stringify({ videoId, serviceId: "yt", formatId: 8 })
+    })
+    var io = await server.json()
+    return {
+      creator: "@Samush$_",
+      title: io.title,
+      thumbnails: { high: thumb_urls.high, medium: thumb_urls.medium },
+      duration: timestamp(io.duration),
+      size: sizes(io.fileSize),
+      dl_url: io.downloadLink
+    }
+  } catch (error) {
+    return { error: '://' }
+  }
+}
+
+async function igsdl(instagramUrl) {
+    const isInstagramUrl = (url) => {
+        const regex = /^(https?:\/\/)?(www\.)?(instagram\.com)\/.+/;
+        return regex.test(url);
+    };
+    if (!isInstagramUrl(instagramUrl)) {
+        return { creator: '@Samush$_', error: 'la url debe ser de instagram' };
+    }
+    try {
+        const response = await fetch('https://snapsave.cc/wp-json/aio-dl/video-data/', {
+            method: 'POST',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Linux; U; Android 12; es; moto g22 Build/STAS32.79-77-28-63-3) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/110.0.0.0 Mobile Safari/537.36',
+                'Referer': 'https://snapsave.cc/#url=https://www.instagram.com/p/DA2fqkMTxd6/?igsh=OTJlaGJxc25iZzF4',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                url: instagramUrl
+            }).toString()
+        })
+        const data = await response.json()
+        const mediaUrls = data.medias.map(media => media.url)
+        return {
+            creator: '@Samush$_',
+            urls: mediaUrls
+        };
+    } catch (error) {
+        return { creator: '@Samush$_', error: '://' };
+    }
+}
+
 const port = 5001;
 app.listen(port, () => {
   console.log('Servidor iniciado en el puerto', port);
 });
+
+app.get('/starlight/ig-story', async (req, res) => {
+  const user = req.query.user;
+  if (!user) {
+    res.status(400).json({ error: 'falta parametro user' });
+    return;
+  }
+  try {
+    const result = await Igstorys(user);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: '://' });
+  }
+});
+
 
 app.get('/starlight/vimeo-DL', async (req, res) => {
     const url = req.query.url
@@ -1828,44 +1992,36 @@ app.get('/starlight/youtube-search', async (req, res) => {
   }
 });
 
-app.get('/starlight/ytmp3', async (req, res) => {
-  try {
-    const url = req.query.url
-    if (!url) {
-      res.setHeader('Content-Type', 'application/json')
-      res.setHeader('Access-Control-Allow-Origin', '*')
-      return res.status(400).send(JSON.stringify({ error: 'falta parametro url' }, null, 4))
-    }
-    const result = await youtubedl(url);
-    res.setHeader('Content-Type', 'application/json')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.status(200).send(JSON.stringify(result, null, 4))
-  } catch (error) {
-    res.setHeader('Content-Type', 'application/json')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.status(500).send(JSON.stringify({ error: "://" }, null, 4))
-  }
-})
-            
-app.get('/starlight/ytmp4', async (req, res) => {
-  try {
-    const url = req.query.url
-    if (!url) {
-      res.setHeader('Content-Type', 'application/json')
-      res.setHeader('Access-Control-Allow-Origin', '*')
-      return res.status(400).send(JSON.stringify({ error: 'falta parametro url' }, null, 4))
-    }
-    let result = await youtubeMp4(url)
-    res.setHeader('Content-Type', 'application/json')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.status(200).send(JSON.stringify(result, null, 4))
-  } catch (error) {
-    res.setHeader('Content-Type', 'application/json')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.status(500).send(JSON.stringify({ error: "://" }, null, 4))
-  }
-})
+app.get('/starlight/youtube-mp3', async (req, res) => {
+  const url = req.query.url
 
+  if (!url) {
+    return res.status(400).json({ error: 'falta parametro url' });
+  }
+  try {
+    const result = await ytdls(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4))
+  } catch (error) {
+    res.status(500).json({ error: '://' });
+  }
+});
+            
+app.get('/starlight/youtube-mp4', async (req, res) => {
+  const url = req.query.url
+  if (!url) {
+    return res.status(400).json({ error: 'falta parametro url' })
+  }
+  try {
+    const result = await ytvs(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: '://' });
+  }
+});
 
 app.get('/starlight/Ifunny-dl', async (req, res) => {
     const text = req.query.text;
@@ -2745,75 +2901,21 @@ app.get('/starlight/turbo-gpt', (req, res) => {
 
 
 
-app.get('/starlight/instagram', async (req, res) => {
-  const url = req.query.url;
-  if (!url) {
-    return res.status(400).json({ error: 'falta el parametro url' });
-  }
-  try {
-    const isUrl = (str) => /^https?:\/\//.test(str);
-    if (!isUrl(url) || !/instagram\.com/i.test(url)) {
-      throw new Error("Url Incorrecto" + url)
+app.get('/starlight/instagram-DL', async (req, res) => {
+    const url = req.query.url;
+    if (!url) {
+        return res.status(400).json({ error: 'falta parametro url' })
     }
-    const apiUrl = "https://saveig.app/api/ajaxSearch";
-    const params = {
-      q: url,
-      t: "media",
-      lang: "en",
-    };
-
-    const headers = {
-      Accept: "*/*",
-      Origin: "https://saveig.app",
-      Referer: "https://saveig.app/en",
-      "Accept-Encoding": "gzip, deflate, br",
-      "Accept-Language": "en-US,en;q=0.9",
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Sec-Ch-Ua":
-        '"Not/A)Brand";v="99", "Microsoft Edge";v="115", "Chromium";v="115"',
-      "Sec-Ch-Ua-Mobile": "?0",
-      "Sec-Ch-Ua-Platform": '"Windows"',
-      "Sec-Fetch-Dest": "empty",
-      "Sec-Fetch-Mode": "cors",
-      "Sec-Fetch-Site": "same-origin",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.183",
-      "X-Requested-With": "XMLHttpRequest",
-    };
-
-    const config = {
-      headers,
-    };
-
-    const response = await axios.post(apiUrl, qs.stringify(params), config);
-    const responseData = response.data.data;
-    const $ = cheerio.load(responseData);
-
-    const downloadItems = $(".download-items");
-    const result = [];
-
-    downloadItems.each((index, element) => {
-      const thumbnailLink = $(element)
-        .find(".download-items__thumb > img")
-        .attr("src");
-      const downloadLink = $(element)
-        .find(".download-items__btn > a")
-        .attr("href");
-
-      result.push({
-        download: downloadLink,
-      });
-    });
-
-    res.status(200).json({
-      ...result,
-    });
-  } catch (error) {
-    res.status(404).json({
-      msg: error?.message || error,
-    });
-  }
+    try {
+        const result = await igsdl(url);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).send(JSON.stringify(result, null, 4));
+    } catch (error) {
+        res.status(500).json({ error: '://' });
+    }
 });
+
 
 app.get('/starlight/soundcloud', async (req, res) => {
     const url = req.query.url;
