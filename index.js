@@ -1,6 +1,4 @@
-const express = require('express');
 const path = require('path');
-const ffmpeg = require('fluent-ffmpeg');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const yts = require('yt-search');
@@ -9,10 +7,8 @@ const moment = require('moment');
 const axios = require('axios');
 require('moment/locale/es');
 const qs = require("qs");
-const NodeID3 = require('node-id3');
 const https = require('https');
-const ytdl = require('@distube/ytdl-core');
-
+const express = require("express")
 async function getTinyURL(longURL) {
     try {
         let response = await axios.get(`https://tinyurl.com/api-create.php?url=${longURL}`);
@@ -21,6 +17,38 @@ async function getTinyURL(longURL) {
         return longURL;
     }
 }
+
+
+
+async function appledl(trackUrl) {
+  try {
+    const response = await axios.get(`https://aaplmusicdownloader.com/api/applesearch.php?url=${encodeURIComponent(trackUrl)}`);
+    const server = response.data;
+    const data = new URLSearchParams(); 
+    data.append('song_name', server.name);
+    data.append('artist_name', server.artist);
+    data.append('url', encodeURIComponent(server.url));
+    data.append('token', 'be018f07e45f97a530bc71fb23a1687ad77322e0ff07cd3dcd47c3c7d98e7125');
+    const postResponse = await axios.post('https://aaplmusicdownloader.com/api/composer/swd.php', data, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
+    const downloadUrl = postResponse.data.dlink;
+    return {
+      creator: "@Samush$_",
+      name: server.name,
+      albumname: server.albumname,
+      artist: server.artist,
+      thumb: server.thumb,
+      duration: server.duration,
+      url: server.url,
+      dl_url: downloadUrl
+    };
+  } catch (error) {
+  }}
 
 const domain = "https://www.tikwm.com/";
 
@@ -639,8 +667,6 @@ const MyMusicSearch = async (query) => {
   }
 };
 
-
-
 async function getTrendingVideos(region = 'US') {
   try {
     let url = `https://www.tikwm.com/api/feed/list?region=${region}`;
@@ -679,7 +705,6 @@ async function getTrendingVideos(region = 'US') {
 }
 
 const app = express();
-
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -1597,48 +1622,28 @@ async function Igstorys(username) {
   }
 }
 
-async function ytdls(url) {
-  var ejec = (url) => (url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=))([a-zA-Z0-9_-]{11})/) || [])[1];
-  var sizes = (bytes) => bytes >= 1073741824 ? (bytes / 1073741824).toFixed(2) + ' GB' : bytes >= 1048576 ? (bytes / 1048576).toFixed(2) + ' MB' : bytes >= 1024 ? (bytes / 1024).toFixed(2) + ' KB' : bytes + ' B';
-  var timestamp = (seconds) => [
-    Math.floor(seconds / 3600) > 0 ? String(Math.floor(seconds / 3600)).padStart(2, '0') : null,
-    String(Math.floor((seconds % 3600) / 60)).padStart(2, '0'),
-    String(seconds % 60).padStart(2, '0')
-  ].filter(Boolean).join(':')
-  var videoId = ejec(url)
-  var thumb_urls = {
-    high: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
-    medium: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
-  }
-  try {
-    await Promise.all(Object.keys(thumb_urls).map(async (quality) => {
-    var json = await fetch(thumb_urls[quality], { method: 'HEAD' })
-   thumb_urls[quality] = json.ok ? thumb_urls[quality] : null
-    }))
-    var server = await fetch('https://flv-to.com/api/init', {
-      method: 'POST',
-      headers: {
-        'cache-control': 'public, max-age=31536000, stale-if-error=60',
-        'content-type': 'application/json; charset=utf-8',
-        'Accept': 'application/json, text/plain, */*',
-        'User-Agent': 'Mozilla/5.0 (Linux; U; Android 12; es; moto g22 Build/STAS32.79-77-28-63-3) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/110.0.0.0 Mobile Safari/537.36',
-        'Referer': 'https://flv-to.com/en13/download'
-      },
-      body: JSON.stringify({ videoId, serviceId: "yt", formatId: 1 })
-    })
-    var io = await server.json()
-    return {
-      creator: "@Samush$_",
-      title: io.title,
-      thumbnails: { high: thumb_urls.high, medium: thumb_urls.medium },
-      duration: timestamp(io.duration),
-      size: sizes(io.fileSize),
-      dl_url: io.downloadLink
-    }
-  } catch (error) {
-    return { error: '://' }
-  }
-}
+
+async function ytdls(youtubeUrl) {
+    try {
+        const encodedUrl = encodeURIComponent(youtubeUrl);
+        const response = await axios.get(`https://y2mp3.biz/backend1.php?id=${encodedUrl}`);
+        const videoId = youtubeUrl.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^&\n]{11})/)[1];
+        const highResThumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        const mediumResThumbnail = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+        const isHighResAvailable = await axios.head(highResThumbnail).then(response => response.status === 200).catch(() => false);
+        const thumbnailUrl = isHighResAvailable ? highResThumbnail : mediumResThumbnail;
+        const shortUrl = `https://youtu.be/${videoId}`;
+        const data = {
+            title: response.data.title,
+            thumbnail: thumbnailUrl, 
+            type: response.data.type,
+            url: shortUrl,
+            ytdl: response.data.download
+
+        };
+     return data;
+    } catch (error) {
+    }}
 
 async function ytvs(url) {
   var ejec = (url) => (url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=))([a-zA-Z0-9_-]{11})/) || [])[1];
@@ -1714,12 +1719,95 @@ async function igsdl(instagramUrl) {
     }
 }
 
-const port = 5001;
+const port = 3777;
 app.listen(port, () => {
   console.log('Servidor iniciado en el puerto', port);
 });
 
+
+const statsFilePath = path.join(__dirname, 'stats.json');
+
+if (!fs.existsSync(statsFilePath)) {
+    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 1987453 }));
+}
+let stats = JSON.parse(fs.readFileSync(statsFilePath));
+
+app.get('/starlight/stats', (req, res) => {
+    res.json({
+        requests: stats.requests  
+    });
+});
+
+
+app.get('/starlight/ig-posts', async (req, res) => {
+ stats.requests++;
+  fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+  const text = req.query.text 
+  if (!text) {
+    return res.status(400).send({ error: "falta parametro text" });
+  }
+
+  const cleanupDesc = (string) => string.split("#")[0]?.trim("\n");
+
+  const axiosInstance = axios.create({
+    baseURL: "https://i.instagram.com",
+    headers: {
+      "x-ig-app-id": "936619743392459",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
+      "Accept-Language": "en-US,en;q=0.9,ru;q=0.8",
+      "Accept-Encoding": "gzip, deflate, br",
+      Accept: "/",
+    },
+  });
+
+  try {
+    const scrapeUser = async (username) => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/v1/users/web_profile_info/?username=${username}`
+        );
+        return response.data.data.user;
+      } catch (error) {
+        throw error;
+      }
+    };
+
+    const getPostByUsername = async (username) => {
+      try {
+        const rawPosts = (await scrapeUser(username)).edge_owner_to_timeline_media
+          .edges;
+        return rawPosts.map(({ node: r }) => {
+          const d = r.edge_media_to_caption.edges;
+          const hasNoDesc = d.length === 0;
+          const outpic = r.display_url;
+          const outcap = hasNoDesc ? "" : cleanupDesc(d[0]?.node.text);
+          const outcode = r.shortcode;
+
+          return {
+            creator: "@Samuh$_",
+            description: outcap,
+            published: r.taken_at_timestamp,
+            img: outpic
+          };
+        });
+      } catch (error) {
+        throw error;
+      }
+    };
+
+    const posts = await getPostByUsername(text);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(posts, null, 4)); 
+  } catch (error) {
+    res.status(500).send({ error: "://" });
+  }
+});
+
 app.get('/starlight/ig-story', async (req, res) => {
+  stats.requests++;
+  fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   const user = req.query.user;
   if (!user) {
     res.status(400).json({ error: 'falta parametro user' });
@@ -1736,7 +1824,27 @@ app.get('/starlight/ig-story', async (req, res) => {
 });
 
 
+app.get('/starlight/apple-music', async (req, res) => {
+  stats.requests++;
+  fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+  const url = req.query.url; 
+  if (!url) {
+    return res.status(400).json({ error: 'falta el parametro url' }); 
+  }
+
+  try {
+    const result = await appledl(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: '://' });
+  }
+});
+
 app.get('/starlight/vimeo-DL', async (req, res) => {
+       stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' }); 
@@ -1752,6 +1860,8 @@ app.get('/starlight/vimeo-DL', async (req, res) => {
 });
 
 app.get('/starlight/capcut-DL', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' });
@@ -1767,6 +1877,8 @@ app.get('/starlight/capcut-DL', async (req, res) => {
 })
 
 app.get('/starlight/spotify-albums-list', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url;
     if (!url) {
         return res.status(400).json({ error: 'falta el parametro url' }); 
@@ -1782,6 +1894,8 @@ app.get('/starlight/spotify-albums-list', async (req, res) => {
 });
 
 app.get('/starlight/threads-DL', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url;
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' }); 
@@ -1798,6 +1912,8 @@ app.get('/starlight/threads-DL', async (req, res) => {
 
 
 app.get('/starlight/Tiktok-voices', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const text = req.query.text || null;
     const voice = req.query.voice || null;
     if (!text && !voice) {
@@ -1826,6 +1942,8 @@ app.get('/starlight/Tiktok-voices', async (req, res) => {
 });
 
 app.get('/starlight/pornhubdl', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   var url = req.query.url
   if (!url) {
     return res.status(400).json({ error: 'falta parametro url' })
@@ -1858,6 +1976,8 @@ app.get('/starlight/pornhubdl', async (req, res) => {
 })*/
 
 app.get('/starlight/tiktok-images', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url;
 
     try {
@@ -1873,6 +1993,8 @@ app.get('/starlight/tiktok-images', async (req, res) => {
 });
 
 app.get('/starlight/snapchat-DL', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url; 
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' });
@@ -1888,6 +2010,8 @@ app.get('/starlight/snapchat-DL', async (req, res) => {
 });
 
 app.get("/starlight/tiktok-user-posts", async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   try {
     const user = req.query.user;
     const result = await tikUser(user);
@@ -1901,6 +2025,8 @@ app.get("/starlight/tiktok-user-posts", async (req, res) => {
 
 
 app.get('/starlight/detect-faces', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   const url = req.query.url
   if (!url) {
     return res.status(400).json({
@@ -1921,6 +2047,8 @@ app.get('/starlight/detect-faces', async (req, res) => {
 })
 
 app.get('/starlight/face-years', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   try {
     let url = req.query.url;
     if (!url) {
@@ -1937,6 +2065,8 @@ app.get('/starlight/face-years', async (req, res) => {
 });
 
 app.get('/starlight/face-similar', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   const url = req.query.url;
 
   if (!url) {
@@ -1958,6 +2088,8 @@ app.get('/starlight/face-similar', async (req, res) => {
 })
 
 app.get('/starlight/spotifydl', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   try {
     let url = req.query.url;
     if (!url) {
@@ -1977,6 +2109,8 @@ app.get('/starlight/spotifydl', async (req, res) => {
 });
 
 app.get('/starlight/youtube-search', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   let text = req.query.text;
 
   if (!text) {
@@ -1992,23 +2126,29 @@ app.get('/starlight/youtube-search', async (req, res) => {
   }
 });
 
-app.get('/starlight/youtube-mp3', async (req, res) => {
-  const url = req.query.url
 
-  if (!url) {
-    return res.status(400).json({ error: 'falta parametro url' });
-  }
-  try {
-    const result = await ytdls(url);
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.status(200).send(JSON.stringify(result, null, 4))
-  } catch (error) {
-    res.status(500).json({ error: '://' });
-  }
+app.get('/starlight/youtube-mp3', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    const url = req.query.url;
+
+    if (!url) {
+        return res.status(400).json({ error: 'falta el parametro url' });
+    }
+
+    try {
+        const details = await ytdls(url);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).send(JSON.stringify(details, null, 4));
+    } catch (error) {
+        res.status(500).json({ error: '://' });
+    }
 });
-            
+
 app.get('/starlight/youtube-mp4', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   const url = req.query.url
   if (!url) {
     return res.status(400).json({ error: 'falta parametro url' })
@@ -2024,6 +2164,8 @@ app.get('/starlight/youtube-mp4', async (req, res) => {
 });
 
 app.get('/starlight/Ifunny-dl', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const text = req.query.text;
     if (!text) {
         res.setHeader('Content-Type', 'application/json');
@@ -2041,6 +2183,8 @@ app.get('/starlight/Ifunny-dl', async (req, res) => {
 });
 
 app.get('/starlight/chazam', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   const url = req.query.url;
   if (!url) {
     return res.status(400).json({ error: 'falta parametro url' });
@@ -2055,6 +2199,8 @@ app.get('/starlight/chazam', async (req, res) => {
 });
 
 app.get('/starlight/tiktok-trends', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
 let region = req.query.region || '';
 try {
 if (!region) {
@@ -2071,6 +2217,8 @@ return res.status(400).json({ error: 'falta parametro region' })
 
 
 app.get('/starlight/terabox-dl', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -2119,6 +2267,8 @@ const fetchProfile = async (username) => {
 };
 
 app.get('/starlight/shazamtube', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url
     if (!url) {
         return res.status(400).send({ error: 'Falta el parametro url' })
@@ -2131,6 +2281,8 @@ app.get('/starlight/shazamtube', async (req, res) => {
 
 
 app.get('/starlight/ig-stalk', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
 let { text } = req.query.text
 if (!text) return res.status(400).json({ error: 'falta parametro text' });
 try {
@@ -2141,6 +2293,8 @@ res.status(500).json({ error: '://' });
 }});
 
 app.get('/starlight/ytmp3', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   let url = req.query.url;
   if (!url) {
     return res.status(400).json({ error: 'falta parametro url' });
@@ -2158,6 +2312,8 @@ app.get('/starlight/ytmp3', async (req, res) => {
 })
 
 app.get('/starlight/genius-lyrics', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const text = req.query.text
     if (!text) {
         return res.status(400).json({ error: 'Falta parametro text' });
@@ -2174,6 +2330,8 @@ app.get('/starlight/genius-lyrics', async (req, res) => {
     }
 })
 app.get('/starlight/hentaicity', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   const url = req.query.url
   try {
     if (!url) {
@@ -2189,6 +2347,8 @@ app.get('/starlight/hentaicity', async (req, res) => {
 })
 
 app.get('/starlight/zedge-walls-search', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const text = req.query.text
     if (!text) {
         return res.status(400).json({ error: 'falta parametro text' });
@@ -2202,6 +2362,8 @@ app.get('/starlight/zedge-walls-search', async (req, res) => {
 });
 
 app.get('/starlight/zedge-rings-search', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     let text = req.query.text;
     if (!text) {
         return res.status(400).json({ error: 'falta el parametro text' })
@@ -2216,6 +2378,8 @@ app.get('/starlight/zedge-rings-search', async (req, res) => {
 
 
 app.get('/starlight/youtube-music-search', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     let text = req.query.text;
     if (!text) {
         res.setHeader('Content-Type', 'application/json');
@@ -2259,6 +2423,8 @@ app.get('/starlight/youtube-music-search', async (req, res) => {
 });
 
 app.get('/starlight/blackbox', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const system = req.query.system;
     const text = req.query.text;
 
@@ -2285,6 +2451,8 @@ app.get('/starlight/blackbox', async (req, res) => {
 
 
 app.get('/starlight/zedge-dl', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     let url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -2307,6 +2475,8 @@ app.get('/starlight/zedge-dl', async (req, res) => {
 
 
 app.get('/starlight/pinterest-search', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const text = req.query.text;
     if (!text) {
         res.setHeader('Content-Type', 'application/json');
@@ -2366,6 +2536,8 @@ app.get('/starlight/pinterest-search', async (req, res) => {
 });
 
 app.get('/starlight/turbo-ai', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const content = req.query.content;
     const text = req.query.text;
     
@@ -2401,6 +2573,8 @@ app.get('/starlight/turbo-ai', async (req, res) => {
 
 
 app.get('/starlight/tiktoksearch', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     let text = req.query.text;
     if (!text) {
         res.setHeader('Content-Type', 'application/json');
@@ -2419,6 +2593,8 @@ app.get('/starlight/tiktoksearch', async (req, res) => {
 
 
 app.get('/starlight/like-downloader', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -2452,6 +2628,8 @@ app.get('/starlight/like-downloader', async (req, res) => {
 });
 
 app.get('/starlight/transcribir-youtube', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     let url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -2473,6 +2651,8 @@ app.get('/starlight/transcribir-youtube', async (req, res) => {
 });
 
 app.get("/starlight/gemini", async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   try {
     const { default: Gemini } = await import("gemini-ai")
     const gemini = new Gemini("AIzaSyAHWF177Syns4TY3DLL9Z_0RNRYPpd5NBs")
@@ -2507,6 +2687,8 @@ app.get("/starlight/gemini", async (req, res) => {
 })
 
 app.get('/starlight/tweeter-stalk', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   let text = req.query.text;
   if (!text) {
     const errorResponse = {
@@ -2570,6 +2752,8 @@ app.get('/starlight/tweeter-stalk', async (req, res) => {
 
 
 app.get('/starlight/tiktok2', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   const { url } = req.query;
   let tiktokUrl = `https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(url)}`;
   try {
@@ -2614,6 +2798,8 @@ app.get('/starlight/tiktok2', async (req, res) => {
 })
 
 app.get('/starlight/soundcloud-search', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   let text = req.query.text;
   if (!text) {
     return res.status(400).json({ error: 'falta parámetro text' });
@@ -2663,6 +2849,8 @@ app.get('/starlight/soundcloud-search', async (req, res) => {
 
         
 app.get('/starlight/chochox', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url;
 
     if (!url) {
@@ -2712,6 +2900,8 @@ app.get('/starlight/chochox', async (req, res) => {
 
 
 app.get('/starlight/facebook', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   const { url } = req.query;
   if (!url) {
     res.setHeader('Content-Type', 'application/json');
@@ -2761,6 +2951,8 @@ app.get('/starlight/facebook', async (req, res) => {
 });
 
 app.get('/starlight/Twitter-Posts', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   try {
     const text = req.query.text;
     if (!text) {
@@ -2806,7 +2998,9 @@ app.get('/starlight/Twitter-Posts', async (req, res) => {
 });
 
 
-app.get('/starlight/tiktok', async (req, res) => {
+app.get('/starlight/tiktok', async (req, res) => {  
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     let url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -2851,6 +3045,8 @@ app.get('/starlight/tiktok', async (req, res) => {
 
 
 app.get('/starlight/chatgpt', (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   let { Hercai } = require('hercai');
   let herc = new Hercai();
   let { text } = req.query;
@@ -2876,6 +3072,8 @@ app.get('/starlight/chatgpt', (req, res) => {
 
 
 app.get('/starlight/turbo-gpt', (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   let { Hercai } = require('hercai');
   let herc = new Hercai();
   let { text } = req.query;
@@ -2902,6 +3100,8 @@ app.get('/starlight/turbo-gpt', (req, res) => {
 
 
 app.get('/starlight/instagram-DL', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url;
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' })
@@ -2918,6 +3118,8 @@ app.get('/starlight/instagram-DL', async (req, res) => {
 
 
 app.get('/starlight/soundcloud', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -2964,6 +3166,8 @@ app.get('/starlight/soundcloud', async (req, res) => {
 });
 
 app.get('/starlight/chochox/search', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const text = req.query.text;
     
     if (!text) {
@@ -3014,6 +3218,8 @@ app.get('/starlight/chochox/search', async (req, res) => {
 
 
 app.get('/starlight/pindl', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     let url = req.query.url
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' })
@@ -3031,6 +3237,8 @@ app.get('/starlight/pindl', async (req, res) => {
 })
 
 app.get('/starlight/mangadl', async (req, res) => {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
     const url = req.query.url;
     
     if (!url) {
@@ -3052,4 +3260,7 @@ app.get('/starlight/mangadl', async (req, res) => {
         res.status(500).json({ error: '://' });
     }
 });
+
+
+
 
