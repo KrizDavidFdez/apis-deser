@@ -80,4 +80,13 @@
                 }
             }, interval);
         }
-    
+     
+ async function fetchStats() {
+    try {
+        const response = await fetch('/starlight/stats');
+        const data = await response.json()
+        document.getElementById('solicitudesCount').textContent = data.requests;
+    } catch (error) {
+    }}
+setInterval(fetchStats, 2000);
+fetchStats();
