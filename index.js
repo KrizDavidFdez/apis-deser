@@ -18,37 +18,122 @@ async function getTinyURL(longURL) {
     }
 }
 
+async function AppleDL(urls) {
+  const body = `------WebKitFormBoundary2kkVxp8sbzLPyeWd\r\nContent-Disposition: form-data; name="url"\r\n\r\n${urls}\r\n------WebKitFormBoundary2kkVxp8sbzLPyeWd\r\nContent-Disposition: form-data; name="_AMwUE"\r\n\r\n92c6f8727f94b2b2070680dc2502e89a\r\n------WebKitFormBoundary2kkVxp8sbzLPyeWd--\r\n`;
 
-
-async function appledl(trackUrl) {
   try {
-    const response = await axios.get(`https://aaplmusicdownloader.com/api/applesearch.php?url=${encodeURIComponent(trackUrl)}`);
-    const server = response.data;
-    const data = new URLSearchParams(); 
-    data.append('song_name', server.name);
-    data.append('artist_name', server.artist);
-    data.append('url', encodeURIComponent(server.url));
-    data.append('token', 'be018f07e45f97a530bc71fb23a1687ad77322e0ff07cd3dcd47c3c7d98e7125');
-    const postResponse = await axios.post('https://aaplmusicdownloader.com/api/composer/swd.php', data, {
+    const response = await fetch(`https://aplmate.com/action`, {
+      method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+        "accept": "*/*",
+        "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+        "content-type": "multipart/form-data; boundary=----WebKitFormBoundary2kkVxp8sbzLPyeWd",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "cookie": "session_data=65b2ff4654329cda98b8a58ac46987df; _ga=GA1.1.547033333.1738352682; __gads=ID=8080de2045efa100:T=1738352683:RT=1738352683:S=ALNI_MZPYh4C6WqfUthM5CxYideZJfnJXQ; __gpi=UID=0000100740e2804e:T=1738352683:RT=1738352683:S=ALNI_MaMNtKUdHDN43FlkvLm7_DdF8goWw; __eoi=ID=99bd0ceb5137629a:T=1738352683:RT=1738352683:S=AA-AfjZMqsR8JvNHPyLOuDaFQcHi; FCNEC=%5B%5B%22AKsRol891HT2PBlEmvsYyPi416DVNQ5JiKNtFngmvqKEibruB_sGWLrzlMb84U2TI3LSRds0ZqGyM-l3bupeO2pRafkueHm48_PKBSoJOlkB8tTapR2QHLDuCtoQrHAze8hk-l83Q5vr879YR4zdG47kiTOtBqCwAA%3D%3D%22%5D%5D; _ga_REPKZMQMMQ=GS1.1.1738352682.1.0.1738352955.0.0.0",
+        "Referer": "https://aplmate.com/es",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+      },
+      body: body
     });
-    const downloadUrl = postResponse.data.dlink;
+
+    const jsonResponse = await response.json();
+    const htmlContent = jsonResponse.html;
+    const titleMatch = htmlContent.match(/<div class="hover-underline" style="color: inherit;" title="([^"]+)">/);
+    const title = titleMatch ? titleMatch[1] : '';
+    const imageMatch = htmlContent.match(/<img src="([^"]+)" class="[^"]*" alt="([^"]+)">/);
+    const image = imageMatch ? imageMatch[1] : '';
+    const dataMatch = htmlContent.match(/<input type="hidden" name="data" value='([^']+)'/);
+    const tokenMatch = htmlContent.match(/<input type="hidden" name="token" value="([^"]+)"/);
+    const baseUrlMatch = htmlContent.match(/<input type="hidden" name="base" value="([^"]+)"/);
+    
+    const data = dataMatch ? dataMatch[1] : '';
+    const token = tokenMatch ? tokenMatch[1] : '';
+    const baseUrl = baseUrlMatch ? baseUrlMatch[1] : '';
+
+    const secondResponse = await fetch("https://aplmate.com/action/track", {
+      method: 'POST',
+      headers: {
+        "accept": "*/*",
+        "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+        "content-type": "multipart/form-data; boundary=----WebKitFormBoundarygHqj8sV7tdA1zw6U",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "cookie": "session_data=65b2ff4654329cda98b8a58ac46987df; _ga=GA1.1.547033333.1738352682; __gads=ID=8080de2045efa100:T=1738352683:RT=1738352683:S=ALNI_MZPYh4C6WqfUthM5CxYideZJfnJXQ; __gpi=UID=0000100740e2804e:T=1738352683:RT=1738352683:S=ALNI_MaMNtKUdHDN43FlkvLm7_DdF8goWw; __eoi=ID=99bd0ceb5137629a:T=1738352683:RT=1738352683:S=AA-AfjZMqsR8JvNHPyLOuDaFQcHi; FCNEC=%5B%5B%22AKsRol891HT2PBlEmvsYyPi416DVNQ5JiKNtFngmvqKEibruB_sGWLrzlMb84U2TI3LSRds0ZqGyM-l3bupeO2pRafkueHm48_PKBSoJOlkB8tTapR2QHLDuCtoQrHAze8hk-l83Q5vr879YR4zdG47kiTOtBqCwAA%3D%3D%22%5D%5D; _ga_REPKZMQMMQ=GS1.1.1738352682.1.0.1738352955.0.0.0",
+        "Referer": "https://aplmate.com/es",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+      },
+      body: `------WebKitFormBoundarygHqj8sV7tdA1zw6U\r\nContent-Disposition: form-data; name="data"\r\n\r\n${data}\r\n------WebKitFormBoundarygHqj8sV7tdA1zw6U\r\nContent-Disposition: form-data; name="base"\r\n\r\n${baseUrl}\r\n------WebKitFormBoundarygHqj8sV7tdA1zw6U\r\nContent-Disposition: form-data; name="token"\r\n\r\n${token}\r\n------WebKitFormBoundarygHqj8sV7tdA1zw6U--\r\n`
+    });
+
+    const secondJsonResponse = await secondResponse.json();
+    const $ = cheerio.load(secondJsonResponse.data);
+    const artist = $('p span').text();
+    const mp3Link = $('a:contains("Download Mp3")').attr('href');
+
     return {
       creator: "@Samush$_",
-      name: server.name,
-      albumname: server.albumname,
-      artist: server.artist,
-      thumb: server.thumb,
-      duration: server.duration,
-      url: server.url,
-      dl_url: downloadUrl
+      title,
+      artist,
+      thumbnail: image,
+      dl_url: "https://aplmate.com" + mp3Link
     };
   } catch (error) {
   }}
+  
+
+async function fbdls(fblink) {
+  try {
+    const response = await fetch(`https://fdownload.app/api/ajaxSearch`, {
+      method: "POST",
+      headers: {
+        "accept": "*/*",
+        "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "x-requested-with": "XMLHttpRequest",
+        "Referer": "https://fdownload.app/es",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+      },
+      body: `p=home&q=${fblink}&lang=es&w=`
+    });
+
+    const data = await response.json(); 
+    const $ = cheerio.load(data.data); 
+    const results = []
+    $('tr').each((index, element) => {
+      const quality = $(element).find('.video-quality').text().trim()
+      const link = $(element).find('a').attr('href')
+      if (quality && link) {
+        const result = {
+          creator: "@Samush$_",
+          quality: quality,
+        }
+        if (quality.includes("720p")) {
+          result.link_hd = link;
+        } else if (quality.includes("360p")) {
+          result.link_sd = link;
+        }
+        results.push(result)
+      }
+    })
+    return results;
+  } catch (error) {
+  }
+}
 
 const domain = "https://www.tikwm.com/";
 
@@ -1719,16 +1804,120 @@ async function igsdl(instagramUrl) {
     }
 }
 
+async function soundlist(url) {
+  const body = JSON.stringify({
+    url: url
+  });
+  const headers = {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+    "content-type": "application/json;charset=UTF-8",
+    "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+    "sec-ch-ua-mobile": "?1",
+    "sec-ch-ua-platform": "\"Android\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://downloadsound.cloud/",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  };
+
+  try {
+    const response = await fetch("https://api.downloadsound.cloud/playlist", {
+      method: "POST",
+      headers: headers,
+      body: body
+    });
+    const data = await response.json();
+    return {
+      creator: "@Samush$_",
+      id: data.author.id,
+      title: data.title,
+      thumb: data.imageURL,
+      owner: data.author.username,
+      profile: data.author.avatar_url,
+      published: data.author.created_at,
+      description: data.author.description,
+      verified: data.author.verified,
+      followers: data.author.followers_count,
+      url: data.url,
+      tracks: data.tracks.map(track => ({
+        title: track.title,
+        author: track.author,
+        image: track.imageURL,
+        url: track.url,
+      }))
+    };
+  } catch (error) {
+   
+  }
+}
+
+
+
+async function ytplayslist(playlistUrl) {
+  const url = "https://youtubemultidownloader.org/process.php"; 
+
+  const headers = {
+    "accept": "*/*",
+    "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+    "content-type": "application/x-www-form-urlencoded",
+    "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+    "sec-ch-ua-mobile": "?1",
+    "sec-ch-ua-platform": "\"Android\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "cookie": "trp_language=en_US",
+    "Referer": "https://youtubemultidownloader.org/en/",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  };
+
+  const body = `playlist_url=${encodeURIComponent(playlistUrl)}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: body
+    });
+
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    
+    const videos = [];
+    
+    $('table.table-striped tbody tr').each((index, element) => {
+      const num = $(element).find('td').eq(0).text().trim();
+      const title = $(element).find('td').eq(2).text().trim(); 
+      const downloadLink = $(element).find('td').eq(3).find('a').attr('href'); 
+      const imageUrl = $(element).find('td').eq(1).find('img').attr('src'); 
+      const youtubeLink = downloadLink ? downloadLink.split('url=')[1] : '';  
+      videos.push({
+        number: num,
+        title: title,
+        downloadLink: youtubeLink,  
+        imageUrl: imageUrl  
+      });
+    });
+    const creator = "@Samush$_";
+    return {
+      creator: creator,
+      videos: videos
+    };
+  } catch (error) {
+    return null;  
+  }
+}
 const port = 3777;
 app.listen(port, () => {
   console.log('Servidor iniciado en el puerto', port);
 });
-
-
 const statsFilePath = path.join(__dirname, 'stats.json');
 
 if (!fs.existsSync(statsFilePath)) {
-    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 1987453 }));
+    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 2001411 }));
 }
 let stats = JSON.parse(fs.readFileSync(statsFilePath));
 
@@ -1739,8 +1928,52 @@ app.get('/starlight/stats', (req, res) => {
 });
 
 
+app.get('/starlight/youtube-playlist', async (req, res) => {
+  stats.requests++;
+  fs.writeFileSync(statsFilePath, JSON.stringify(stats));
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: 'falta parametro url' });
+  }
+
+  try {
+    const result = await ytplayslist(url);  
+    if (result) {
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.status(200).send(JSON.stringify(result, null, 4));  
+    } else {
+      res.status(500).send(JSON.stringify({ error: '://' }, null, 4));
+    }
+  } catch (error) {
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(500).send(JSON.stringify({ error: '://' }, null, 4));
+  }
+});
+app.get('/starlight/soundcloud-playlist', async (req, res) => {
+  stats.requests++;
+  fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+
+  try {
+    const result = await soundlist(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+
+
+
+
 app.get('/starlight/ig-posts', async (req, res) => {
- stats.requests++;
+  stats.requests++;
   fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   const text = req.query.text 
   if (!text) {
@@ -1827,18 +2060,21 @@ app.get('/starlight/ig-story', async (req, res) => {
 app.get('/starlight/apple-music', async (req, res) => {
   stats.requests++;
   fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
-  const url = req.query.url; 
+  const url = req.query.url
+
   if (!url) {
-    return res.status(400).json({ error: 'falta el parametro url' }); 
+    return res.status(400).json({ error: 'falta parametro url' });
   }
 
   try {
-    const result = await appledl(url);
+    const data = await AppleDL(url);
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.status(200).send(JSON.stringify(result, null, 4));
+    res.status(200).send(JSON.stringify(data, null, 4));
   } catch (error) {
-    res.status(500).json({ error: '://' });
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(500).send(JSON.stringify({ error: '://' }, null, 4));
   }
 });
 
@@ -2900,6 +3136,22 @@ app.get('/starlight/chochox', async (req, res) => {
 
 
 app.get('/starlight/facebook', async (req, res) => {
+  try {
+    stats.requests++;
+    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    const url = req.query.url
+    if (!url) {
+      return res.status(400).json({ error: 'falta parametro url' });
+    }
+    const result = await fbdls(url);
+    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.status(200).send(JSON.stringify(result, null, 4))
+  } catch (error) {
+    res.status(500).json({ error: '://' })
+  }
+})
+/*app.get('/starlight/facebook', async (req, res) => {
     stats.requests++;
     fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
   const { url } = req.query;
@@ -2949,7 +3201,7 @@ app.get('/starlight/facebook', async (req, res) => {
     res.status(500).end(JSON.stringify({ error: "://" }, null, 2));
   }
 });
-
+*/
 app.get('/starlight/Twitter-Posts', async (req, res) => {
     stats.requests++;
     fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
@@ -3260,6 +3512,9 @@ app.get('/starlight/mangadl', async (req, res) => {
         res.status(500).json({ error: '://' });
     }
 });
+
+
+
 
 
 
