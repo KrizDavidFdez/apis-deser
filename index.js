@@ -1897,8 +1897,8 @@ async function ytplayslist(playlistUrl) {
       videos.push({
         number: num,
         title: title,
-        downloadLink: youtubeLink,  
-        imageUrl: imageUrl  
+        thumb: imageUrl,  
+        youtube: youtubeLink
       });
     });
     const creator = "@Samush$_";
