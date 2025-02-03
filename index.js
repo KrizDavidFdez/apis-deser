@@ -1897,8 +1897,8 @@ async function ytplayslist(playlistUrl) {
       videos.push({
         number: num,
         title: title,
-        thumb: imageUrl,  
-        youtube: youtubeLink
+        downloadLink: youtubeLink,  
+        imageUrl: imageUrl  
       });
     });
     const creator = "@Samush$_";
@@ -1917,7 +1917,7 @@ app.listen(port, () => {
 const statsFilePath = path.join(__dirname, 'stats.json');
 
 if (!fs.existsSync(statsFilePath)) {
-    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 2018657 }));
+    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 2001411 }));
 }
 let stats = JSON.parse(fs.readFileSync(statsFilePath));
 
@@ -1926,6 +1926,84 @@ app.get('/starlight/stats', (req, res) => {
         requests: stats.requests  
     });
 });
+
+async function obtenerAudio(text, voice) {
+    var voices = {
+    "Carlos": "7",  
+    "Carmen": "1",
+    "Jorge": "6",
+    "Juan": "2",
+    "Leonor": "9",
+    "Francisca": "3",
+    "Esperanza": "5",
+    "Diego": "4"  
+  };
+  var voiceId = voices[voice];
+  try {
+    var sv = await fetch(`https://cache-a.oddcast.com/tts/genC.php?EID=2&LID=2&VID=${voiceId}&TXT=${text}&EXT=mp3&FNAME=&ACC=15679&SceneID=2701950&HTTP_ERR=`, {
+      method: "GET",
+      headers: {
+        "accept": "*/*",
+        "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+        "cache-control": "no-cache",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "sec-fetch-dest": "audio",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site",
+        "Referer": "https://www.oddcast.com/",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+      }
+    });
+
+    var buffer = await sv.buffer();
+    var base64Audio = buffer.toString('base64');
+    return base64Audio;
+  } catch (error) {
+    return null;
+  }
+}
+
+app.get('/starlight/loquendo', async (req, res) => {
+  stats.requests++;
+  fs.writeFileSync(statsFilePath, JSON.stringify(stats));
+  const { text, voice } = req.query;
+  if (!text) {
+    const models = [
+      "Carlos",
+      "Carmen",
+      "Jorge",
+      "Juan",
+      "Leonor",
+      "Francisca",
+      "Esperanza",
+      "Diego"
+    ]; 
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    return res.status(400).send(JSON.stringify({ message: "falta el parametro text", models }, null, 4));
+  }
+  try {
+    const base64Audio = await obtenerAudio(text, voice);
+    const responseData = {
+      creator: "@Samush$_",
+      audio: base64Audio
+    }
+    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(responseData, null, 4));
+  } catch (error) {
+    const errorResponse = {
+      error: "://"
+    };
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(500).send(JSON.stringify(errorResponse, null, 4));  
+  }
+});
+
 
 
 app.get('/starlight/youtube-playlist', async (req, res) => {
