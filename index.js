@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const yts = require('yt-search');
 const cheerio = require("cheerio");
+const FormData = require("form-data");
 const moment = require('moment');
 const axios = require('axios');
 require('moment/locale/es');
@@ -16,6 +17,50 @@ async function getTinyURL(longURL) {
     } catch (error) {
         return longURL;
     }
+}
+
+async function UploadEE(fileUrl) {
+  function fakeUserAgent() {
+    return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36";
+  }
+
+  try {
+    const baseUrl = "https://www.upload.ee";
+    const response = await fetch(`${baseUrl}/ubr_link_upload.php?rnd_id=${Date.now()}`);
+    const uploadId = ((await response.text()).match(/startUpload\("(.+?)"/) || [])[1];
+    const fileResponse = await fetch(fileUrl, { headers: { "User-Agent": fakeUserAgent() } });
+    const fileBuffer = await fileResponse.buffer();
+    const formData = new FormData();
+    formData.append("upfile_0", fileBuffer, { filename: "starlights" });
+    formData.append("link", "");
+    formData.append("email", "");
+    formData.append("category", "cat_file");
+    formData.append("big_resize", "none");
+    formData.append("small_resize", "120x90");
+
+    const uploadResponse = await fetch(
+      `${baseUrl}/cgi-bin/ubr_upload.pl?X-Progress-ID=${encodeURIComponent(uploadId)}&upload_id=${encodeURIComponent(uploadId)}`,
+      {
+        method: "POST",
+        body: formData,
+        headers: {
+          Referer: baseUrl,
+          ...formData.getHeaders(),
+        },
+      }
+    );
+    const firstData = await uploadResponse.text();
+    const viewUrl = cheerio.load(firstData)("input#file_src").val() || "";
+    const viewResponse = await fetch(viewUrl);
+    const finalData = await viewResponse.text();
+    const downUrl = cheerio.load(finalData)("#d_l").attr("href") || "";
+    return {
+      creator: "@Samush$_",
+      url: downUrl,
+    };
+  } catch (error) {
+    return { creator: "@Samush$_", url: null };
+  }
 }
 
 async function AppleDL(urls) {
@@ -787,6 +832,36 @@ async function getTrendingVideos(region = 'US') {
     console.error(error);
     return [];
   }
+}
+
+async function shazamv2(url) {
+    try {
+        const response = await axios.get('https://shazam-song-recognition-api.p.rapidapi.com/recognize/url', {
+            params: { url },
+            headers: {
+                'x-rapidapi-key': '55dda3079amsh105aa37ae010fd2p1ac204jsnb424bf6bd3e6',
+                'x-rapidapi-host': 'shazam-song-recognition-api.p.rapidapi.com',
+            }
+        })
+        const data = response.data
+        return {
+            creator: "@Samush$_",
+            data: {
+                title: data.track.title,
+                artist: data.track.subtitle,
+                avatar: data.track.share.avatar,
+                thumbnail: data.track.share.image,
+                gender: data.track.genres.primary,
+                type: data.track.type,
+                url: data.track.url,
+            }
+        };
+    } catch (error) {
+        return {
+            creator: "@Samush$_",
+            error: '://'
+        };
+    }
 }
 
 const app = express();
@@ -1773,36 +1848,42 @@ async function ytvs(url) {
   }
 }
 
-async function igsdl(instagramUrl) {
-    const isInstagramUrl = (url) => {
-        const regex = /^(https?:\/\/)?(www\.)?(instagram\.com)\/.+/;
-        return regex.test(url);
+async function igsdl(postUrl) {
+  try {
+    const url = "https://indownloader.app/request";
+    const headers = {
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      Accept: "application/json, text/javascript, */*; q=0.01",
+      "X-Requested-With": "XMLHttpRequest",
+      "User-Agent":
+        "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36",
+      Referer: "https://indownloader.app/video-downloader",
     };
-    if (!isInstagramUrl(instagramUrl)) {
-        return { creator: '@Samush$_', error: 'la url debe ser de instagram' };
-    }
-    try {
-        const response = await fetch('https://snapsave.cc/wp-json/aio-dl/video-data/', {
-            method: 'POST',
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Linux; U; Android 12; es; moto g22 Build/STAS32.79-77-28-63-3) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/110.0.0.0 Mobile Safari/537.36',
-                'Referer': 'https://snapsave.cc/#url=https://www.instagram.com/p/DA2fqkMTxd6/?igsh=OTJlaGJxc25iZzF4',
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                url: instagramUrl
-            }).toString()
-        })
-        const data = await response.json()
-        const mediaUrls = data.medias.map(media => media.url)
+    const data = new URLSearchParams({ link: postUrl, downloader: "video" });
+    const response = await axios.post(url, data, { headers });
+    const { html } = response.data;
+    const $ = cheerio.load(html);
+    const downloadLinks = $(".download-options a")
+      .map((_, el) => $(el).attr("href"))
+      .get()
+      .filter((link) => link.includes("ey"));
+
+    const results = downloadLinks.map((v, i) => {
+      try {
         return {
-            creator: '@Samush$_',
-            urls: mediaUrls
+          creator: "@Samush$_",
+          url: JSON.parse(atob(v.split("id=")[1].split("&")[0]))?.url,
         };
-    } catch (error) {
-        return { creator: '@Samush$_', error: '://' };
-    }
-}
+      } catch (error) {
+        console.error("Error decoding base64:", error);
+        return { creator: "@Samush$_", url: v };
+      }
+    });
+    return results.filter(
+      (item, index, self) => index === self.findIndex((t) => t.url === item.url)
+    );
+  } catch (error) {
+  }}
 
 async function soundlist(url) {
   const body = JSON.stringify({
@@ -1910,22 +1991,138 @@ async function ytplayslist(playlistUrl) {
     return null;  
   }
 }
+
+async function actualizarStats(req) {
+    stats.requests++;
+    await fs.promises.writeFile(statsFilePath, JSON.stringify(stats, null, 4));
+    await obtenerDatosUsuario(req);
+    await ghpublish();
+}
+
 const port = 3777;
 app.listen(port, () => {
   console.log('Servidor iniciado en el puerto', port);
 });
+
 const statsFilePath = path.join(__dirname, 'stats.json');
 
 if (!fs.existsSync(statsFilePath)) {
-    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 2001411 }));
+    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 2097927 }));
 }
+
 let stats = JSON.parse(fs.readFileSync(statsFilePath));
+
+async function obtenerDatosUsuario(req) {
+  //  stats.requests++;
+    let userIP = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    const userAgent = req.headers["user-agent"];
+    const userLang = req.headers["accept-language"] || "";
+    const screenSize = req.headers["sec-ch-ua-platform"] || "";
+
+    if (userIP === "::1" || userIP === "127.0.0.1") {
+        userIP = "8.8.8.8"
+    }
+
+    try {
+        const [location, cloudflareData] = await Promise.all([
+            axios.get(`http://ip-api.com/json/${userIP}?fields=status,message,country,regionName,city,zip,lat,lon,isp,as,timezone,currency,query,mobile,proxy,hosting`),
+            getCloudflareData()
+        ]);
+
+        const { country, regionName, city, zip, lat, lon, isp, as, timezone, currency, query, mobile, proxy, hosting } = location.data;
+
+        const weatherResponse = await axios.get(`https://wttr.in/${lat},${lon}?format=j1`);
+        const weatherData = weatherResponse.data.current_condition[0];
+
+        const clima = {
+            temperatura: `${weatherData.temp_C}°C`,
+            humedad: `${weatherData.humidity}%`,
+            condiciones: weatherData.weatherDesc[0].value
+        };
+
+        const userAgentData = parseUserAgent(userAgent);
+
+        const datosUsuario = {
+            ip: query || userIP,
+            pais: country || "",
+            region: regionName || "",
+            ciudad: city || "",
+            code_zip: zip || "",
+            latitud: lat || "",
+            longitud: lon || "",
+            supplier: isp || "",
+            organization: as || "",
+            time_zone: timezone || "",
+            currency: currency || "",
+            operating_system: userAgentData.os,
+            browser: userAgentData.browser,
+            device: userAgentData.device,
+            screen_resolution: screenSize,
+            connection: mobile ? "Móvil" : "Fija",
+            es_vpn_proxy: proxy || hosting ? "Sí" : "No",
+            climate: clima,
+            language: userLang,
+            date: fetc(timezone),
+            others_data: cloudflareData
+        };
+
+        if (!Array.isArray(stats.logs)) stats.logs = [];
+        stats.logs.push(datosUsuario);
+
+        fs.writeFileSync(statsFilePath, JSON.stringify(stats, null, 4));
+      //  return { success: true, message: "", data: datosUsuario };
+    } catch (error) {
+    }}
+
+async function getCloudflareData() {
+    try {
+        const response = await axios.get("https://speed.cloudflare.com/meta");
+        return {
+            Ip: response.data.clientIp || "",
+            http: response.data.httpProtocol || "",
+            asn: response.data.asn || "",
+            organization: response.data.asOrganization || "",
+            colo: response.data.colo || "",
+            country: response.data.country || "",
+            city: response.data.city || "",
+            region: response.data.region || "",
+            latitude: response.data.latitude || "",
+            longitude: response.data.longitude || ""
+        };
+    } catch (error) {
+        return { error: "No se pudo obtener datos de Cloudflare" };
+    }
+}
+
+function parseUserAgent(ua) {
+    const osRegex = /(Windows|Macintosh|Linux|Android|iOS|iPhone|iPad|Ubuntu)/i;
+    const browserRegex = /(Chrome|Firefox|Safari|Edge|Opera|MSIE|Trident)/i;
+    const mobileRegex = /(Mobile|Android|iPhone|iPad)/i;
+
+    const osMatch = ua.match(osRegex);
+    const browserMatch = ua.match(browserRegex);
+    const deviceMatch = ua.match(mobileRegex) ? "Móvil" : "PC/Tablet";
+    return {
+        os: osMatch ? osMatch[0] : "",
+        browser: browserMatch ? browserMatch[0] : "",
+        device: deviceMatch
+    };
+}
+
+function fetc(timezone) {
+    try {
+        return new Intl.DateTimeFormat("es-ES", { timeZone: timezone, timeStyle: "full", dateStyle: "full" }).format(new Date());
+    } catch {
+        return "Fecha desconocida";
+    }
+}
 
 app.get('/starlight/stats', (req, res) => {
     res.json({
         requests: stats.requests  
     });
 });
+
 
 async function obtenerAudio(text, voice) {
     var voices = {
@@ -1966,9 +2163,372 @@ async function obtenerAudio(text, voice) {
   }
 }
 
-app.get('/starlight/loquendo', async (req, res) => {
-  stats.requests++;
-  fs.writeFileSync(statsFilePath, JSON.stringify(stats));
+async function shortenURLN9Cl(originalUrl) {
+    const url = "https://n9.cl/es";
+    const headers = {
+        "accept": "*/*",
+        "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+        "cache-control": "no-cache",
+        "content-type": "application/x-www-form-urlencoded",
+        "if-modified-since": "Sat, 1 Jan 2000 00:00:00 GMT",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "Referer": "https://n9.cl/es",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+    };
+    const body = `xjxfun=create&xjxr=${Date.now()}&xjxargs[]=S%3C!%5BCDATA%5B${encodeURIComponent(originalUrl)}%5D%5D%3E&xjxargs[]=N1&xjxargs[]=S`;
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers,
+            body
+        });
+        const resultText = await response.text();
+        const match = resultText.match(/window\.location\s*=\s*"([^"]+)"/);
+        return {
+            creator: "@Samush$_",
+            short: match ? match[1] : null
+        };
+    } catch (error) {
+    
+    }}
+
+async function shortenURLShortenerMe(originalUrl) {
+    const headers = {
+        "accept": "*/*",
+        "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+        "cache-control": "no-cache",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "x-requested-with": "XMLHttpRequest",
+        "Referer": "https://url-shortener.me/",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+    };
+
+    const body = `url=${encodeURIComponent(originalUrl)}`;
+
+    try {
+        const response = await fetch("https://url-shortener.me/Home/ShortURL", {
+            method: "POST",
+            headers,
+            body
+        });
+        const result = await response.json();
+        const createdDate = new Date(result.createdDate);
+        const options = { timeZone: "America/Cancun", year: "numeric", month: "2-digit", day: "2-digit" };
+        const localDate = createdDate.toLocaleDateString("es-MX", options);
+
+        return {
+            creator: "@Samush$_",
+            views: result.view,
+            created: localDate,
+            short: result.shortedURL
+        }
+    } catch (error) {
+        return null;
+    }
+}
+
+async function ouo(url) {
+    try {
+        const response = await fetch(`http://ouo.io/api/KzDtJCvY?s=${url}`);
+        const shortUrl = await response.text();
+        
+        return {
+            creator: "@Samush$_",
+            short: shortUrl
+        };
+    } catch (error) {
+        return null;
+    }
+}
+
+async function vurl(url) {
+    try {
+        const response = await fetch(`https://vurl.com/api.php?url=${encodeURIComponent(url)}`);
+        const shortUrl = await response.text();
+
+        return {
+            creator: "@Samush$_",
+            short: shortUrl.trim()
+        };
+    } catch (error) {
+        console.error("Error:", error);
+        return null;
+    }
+}
+
+async function UploadKitc(fileUrl) {
+  function fakeUserAgent() {
+    return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36";
+  }
+  try {
+    const fileResponse = await fetch(fileUrl, { headers: { "User-Agent": fakeUserAgent() } });
+    const fileBuffer = await fileResponse.buffer();
+    const formData = new FormData();
+    formData.append("file", fileBuffer, { filename: "starlights" });
+
+    const response = await fetch("https://ki.tc/file/u/", {
+      method: "POST",
+      body: formData,
+      headers: {
+        "User-Agent": fakeUserAgent(),
+      },
+    });
+    const result = await response.json();
+    return {
+      creator: "@Samush$_",
+      url: result.file?.link,
+    };
+  } catch (error) {
+   
+  }
+}
+
+async function UploadTmpfiles(fileUrl) {
+  function fakeUserAgent() {
+    return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36";
+  }
+
+  try {
+    const fileResponse = await fetch(fileUrl, { headers: { "User-Agent": fakeUserAgent() } });
+    const arrayBuffer = await fileResponse.arrayBuffer();
+    const fileBuffer = Buffer.from(arrayBuffer);
+    const ext = fileUrl.split(".").pop().split("?")[0] || "bin";
+    const formData = new FormData();
+    formData.append("file", fileBuffer, { filename: `starlight.${ext}` });
+    const response = await fetch("https://tmpfiles.org/api/v1/upload", {
+      method: "POST",
+      body: formData,
+      headers: { "User-Agent": fakeUserAgent() },
+    });
+
+    const result = await response.json();
+    const originalURL = result?.data?.url;
+
+    return {
+      creator: "@Samush$_",
+      url: originalURL ? `https://tmpfiles.org/dl/${originalURL.split("/").slice(-2).join("/")}` : null
+    };
+  } catch (error) {
+    
+  }
+}
+
+
+async function UploadUguu(fileUrl) {
+  function fakeUserAgent() {
+    return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36";
+  }
+
+  try {
+    const fileResponse = await fetch(fileUrl, { headers: { "User-Agent": fakeUserAgent() } });
+    const fileBuffer = await fileResponse.buffer();
+    const formData = new FormData();
+    formData.append("files[]", fileBuffer, { filename: "starlights" });
+
+    const response = await fetch("https://uguu.se/upload?output=json", {
+      method: "POST",
+      body: formData,
+      headers: {
+        "User-Agent": fakeUserAgent(),
+      },
+    });
+
+    const result = await response.json();
+    return {
+      creator: "@Samush$_",
+      url: result.files[0]?.url,
+    };
+  } catch (error) {
+
+  }
+}
+
+async function UploadPuticu(fileUrl) {
+  function fakeUserAgent() {
+    return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36";
+  }
+  try {
+    const fileResponse = await fetch(fileUrl, { headers: { "User-Agent": fakeUserAgent() } });
+
+    const fileBuffer = await fileResponse.buffer();
+    const response = await fetch("https://put.icu/upload/", {
+      method: "PUT",
+      body: fileBuffer,
+      headers: {
+        "User-Agent": fakeUserAgent(),
+        Accept: "application/json",
+      },
+    });
+
+    const result = await response.json();
+    return {
+      creator: "@Samush$_",
+      url: result.direct_url,
+    }
+  } catch (error) {
+  }}
+
+
+app.get('/starlight/uploader-put', async (req, res) => {
+  actualizarStats(req);  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+  try {
+    const result = await UploadPuticu(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+
+app.get('/starlight/uploader-tmp', async (req, res) => {
+  actualizarStats(req);  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+  try {
+    const result = await UploadTmpfiles(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+app.get('/starlight/uploader-uguu', async (req, res) => {
+  actualizarStats(req);  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+  try {
+    const result = await UploadUguu(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+
+
+app.get('/starlight/uploader-kitc', async (req, res) => {
+  actualizarStats(req);  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+  try {
+    const result = await UploadKitc(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+
+app.get('/starlight/uploader-ee', async (req, res) => {
+  actualizarStats(req);  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+  try {
+    const result = await UploadEE(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+
+app.get('/starlight/shorten-vurl', async (req, res) => {
+  actualizarStats(req);  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+  try {
+    const result = await vurl(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+
+app.get('/starlight/shorten-ouo', async (req, res) => {
+  actualizarStats(req);  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+  try {
+    const result = await ouo(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+
+app.get('/starlight/shortenerme', async (req, res) => {
+  actualizarStats(req);  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+  try {
+    const result = await shortenURLShortenerMe(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+
+app.get('/starlight/shorten-n9cl', async (req, res) => {
+  actualizarStats(req);  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+  try {
+    const result = await shortenURLN9Cl(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+/*app.get('/starlight/loquendo', async (req, res) => {
+actualizarStats(req);
+  await obtenerDatosUsuario();
+  await gh();
   const { text, voice } = req.query;
   if (!text) {
     const models = [
@@ -2002,13 +2562,48 @@ app.get('/starlight/loquendo', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.status(500).send(JSON.stringify(errorResponse, null, 4));  
   }
+});*/
+
+app.get('/starlight/shazam', async (req, res) => {
+    actualizarStats(req);
+    const url = req.query.url
+    if (!url) {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        return res.status(400).send(JSON.stringify({ msg: "falta el parametro url" }, null, 4));
+    }
+
+    try {
+        const songData = await shazamv2(url);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        return res.status(200).send(JSON.stringify(songData, null, 4));
+    } catch (error) {
+       /* res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        return res.status(500).send(JSON.stringify({ message: "://" }, null, 4));*/
+    }
+});
+
+app.get('/starlight/loquendo', async (req, res) => {
+    try {
+        actualizarStats(req);
+        const { text, voice } = req.query;
+        if (!text) {
+            const models = ["Carlos", "Carmen", "Jorge", "Juan", "Leonor", "Francisca", "Esperanza", "Diego"];
+            return res.status(400).json({ message: "Falta el parámetro text", models });
+        }
+        const base64Audio = await obtenerAudio(text, voice);
+        res.status(200).json({ creator: "@Samush$_", audio: base64Audio });
+
+    } catch (error) {
+        res.status(500).json({ error: "://" });
+    }
 });
 
 
-
 app.get('/starlight/youtube-playlist', async (req, res) => {
-  stats.requests++;
-  fs.writeFileSync(statsFilePath, JSON.stringify(stats));
+actualizarStats(req);
   const url = req.query.url;
   if (!url) {
     return res.status(400).json({ error: 'falta parametro url' });
@@ -2030,8 +2625,7 @@ app.get('/starlight/youtube-playlist', async (req, res) => {
   }
 });
 app.get('/starlight/soundcloud-playlist', async (req, res) => {
-  stats.requests++;
-  fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+actualizarStats(req);  
   const url = req.query.url;
   if (!url) {
     return res.status(400).json({ error: "falta el parametro url" });
@@ -2048,11 +2642,8 @@ app.get('/starlight/soundcloud-playlist', async (req, res) => {
 });
 
 
-
-
 app.get('/starlight/ig-posts', async (req, res) => {
-  stats.requests++;
-  fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+actualizarStats(req);  
   const text = req.query.text 
   if (!text) {
     return res.status(400).send({ error: "falta parametro text" });
@@ -2117,8 +2708,7 @@ app.get('/starlight/ig-posts', async (req, res) => {
 });
 
 app.get('/starlight/ig-story', async (req, res) => {
-  stats.requests++;
-  fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+actualizarStats(req);  
   const user = req.query.user;
   if (!user) {
     res.status(400).json({ error: 'falta parametro user' });
@@ -2136,8 +2726,7 @@ app.get('/starlight/ig-story', async (req, res) => {
 
 
 app.get('/starlight/apple-music', async (req, res) => {
-  stats.requests++;
-  fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+actualizarStats(req);  
   const url = req.query.url
 
   if (!url) {
@@ -2157,8 +2746,7 @@ app.get('/starlight/apple-music', async (req, res) => {
 });
 
 app.get('/starlight/vimeo-DL', async (req, res) => {
-       stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+actualizarStats(req);
     const url = req.query.url
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' }); 
@@ -2174,8 +2762,7 @@ app.get('/starlight/vimeo-DL', async (req, res) => {
 });
 
 app.get('/starlight/capcut-DL', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' });
@@ -2191,8 +2778,7 @@ app.get('/starlight/capcut-DL', async (req, res) => {
 })
 
 app.get('/starlight/spotify-albums-list', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url;
     if (!url) {
         return res.status(400).json({ error: 'falta el parametro url' }); 
@@ -2208,8 +2794,7 @@ app.get('/starlight/spotify-albums-list', async (req, res) => {
 });
 
 app.get('/starlight/threads-DL', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req); 
     const url = req.query.url;
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' }); 
@@ -2226,8 +2811,7 @@ app.get('/starlight/threads-DL', async (req, res) => {
 
 
 app.get('/starlight/Tiktok-voices', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const text = req.query.text || null;
     const voice = req.query.voice || null;
     if (!text && !voice) {
@@ -2256,8 +2840,7 @@ app.get('/starlight/Tiktok-voices', async (req, res) => {
 });
 
 app.get('/starlight/pornhubdl', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   var url = req.query.url
   if (!url) {
     return res.status(400).json({ error: 'falta parametro url' })
@@ -2290,8 +2873,7 @@ app.get('/starlight/pornhubdl', async (req, res) => {
 })*/
 
 app.get('/starlight/tiktok-images', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url;
 
     try {
@@ -2307,8 +2889,7 @@ app.get('/starlight/tiktok-images', async (req, res) => {
 });
 
 app.get('/starlight/snapchat-DL', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url; 
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' });
@@ -2324,8 +2905,7 @@ app.get('/starlight/snapchat-DL', async (req, res) => {
 });
 
 app.get("/starlight/tiktok-user-posts", async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   try {
     const user = req.query.user;
     const result = await tikUser(user);
@@ -2339,8 +2919,7 @@ app.get("/starlight/tiktok-user-posts", async (req, res) => {
 
 
 app.get('/starlight/detect-faces', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   const url = req.query.url
   if (!url) {
     return res.status(400).json({
@@ -2361,8 +2940,7 @@ app.get('/starlight/detect-faces', async (req, res) => {
 })
 
 app.get('/starlight/face-years', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   try {
     let url = req.query.url;
     if (!url) {
@@ -2379,8 +2957,7 @@ app.get('/starlight/face-years', async (req, res) => {
 });
 
 app.get('/starlight/face-similar', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   const url = req.query.url;
 
   if (!url) {
@@ -2402,8 +2979,7 @@ app.get('/starlight/face-similar', async (req, res) => {
 })
 
 app.get('/starlight/spotifydl', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   try {
     let url = req.query.url;
     if (!url) {
@@ -2423,8 +2999,7 @@ app.get('/starlight/spotifydl', async (req, res) => {
 });
 
 app.get('/starlight/youtube-search', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   let text = req.query.text;
 
   if (!text) {
@@ -2442,8 +3017,7 @@ app.get('/starlight/youtube-search', async (req, res) => {
 
 
 app.get('/starlight/youtube-mp3', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url;
 
     if (!url) {
@@ -2461,8 +3035,7 @@ app.get('/starlight/youtube-mp3', async (req, res) => {
 });
 
 app.get('/starlight/youtube-mp4', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   const url = req.query.url
   if (!url) {
     return res.status(400).json({ error: 'falta parametro url' })
@@ -2478,8 +3051,7 @@ app.get('/starlight/youtube-mp4', async (req, res) => {
 });
 
 app.get('/starlight/Ifunny-dl', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const text = req.query.text;
     if (!text) {
         res.setHeader('Content-Type', 'application/json');
@@ -2497,8 +3069,7 @@ app.get('/starlight/Ifunny-dl', async (req, res) => {
 });
 
 app.get('/starlight/chazam', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req); 
   const url = req.query.url;
   if (!url) {
     return res.status(400).json({ error: 'falta parametro url' });
@@ -2513,8 +3084,7 @@ app.get('/starlight/chazam', async (req, res) => {
 });
 
 app.get('/starlight/tiktok-trends', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+ actualizarStats(req);
 let region = req.query.region || '';
 try {
 if (!region) {
@@ -2531,8 +3101,7 @@ return res.status(400).json({ error: 'falta parametro region' })
 
 
 app.get('/starlight/terabox-dl', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -2581,8 +3150,7 @@ const fetchProfile = async (username) => {
 };
 
 app.get('/starlight/shazamtube', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url
     if (!url) {
         return res.status(400).send({ error: 'Falta el parametro url' })
@@ -2595,8 +3163,7 @@ app.get('/starlight/shazamtube', async (req, res) => {
 
 
 app.get('/starlight/ig-stalk', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
 let { text } = req.query.text
 if (!text) return res.status(400).json({ error: 'falta parametro text' });
 try {
@@ -2607,8 +3174,7 @@ res.status(500).json({ error: '://' });
 }});
 
 app.get('/starlight/ytmp3', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   let url = req.query.url;
   if (!url) {
     return res.status(400).json({ error: 'falta parametro url' });
@@ -2626,8 +3192,7 @@ app.get('/starlight/ytmp3', async (req, res) => {
 })
 
 app.get('/starlight/genius-lyrics', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const text = req.query.text
     if (!text) {
         return res.status(400).json({ error: 'Falta parametro text' });
@@ -2644,8 +3209,7 @@ app.get('/starlight/genius-lyrics', async (req, res) => {
     }
 })
 app.get('/starlight/hentaicity', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req); 
   const url = req.query.url
   try {
     if (!url) {
@@ -2661,8 +3225,7 @@ app.get('/starlight/hentaicity', async (req, res) => {
 })
 
 app.get('/starlight/zedge-walls-search', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req); 
     const text = req.query.text
     if (!text) {
         return res.status(400).json({ error: 'falta parametro text' });
@@ -2676,8 +3239,7 @@ app.get('/starlight/zedge-walls-search', async (req, res) => {
 });
 
 app.get('/starlight/zedge-rings-search', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     let text = req.query.text;
     if (!text) {
         return res.status(400).json({ error: 'falta el parametro text' })
@@ -2692,8 +3254,7 @@ app.get('/starlight/zedge-rings-search', async (req, res) => {
 
 
 app.get('/starlight/youtube-music-search', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     let text = req.query.text;
     if (!text) {
         res.setHeader('Content-Type', 'application/json');
@@ -2737,8 +3298,7 @@ app.get('/starlight/youtube-music-search', async (req, res) => {
 });
 
 app.get('/starlight/blackbox', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req); 
     const system = req.query.system;
     const text = req.query.text;
 
@@ -2765,8 +3325,7 @@ app.get('/starlight/blackbox', async (req, res) => {
 
 
 app.get('/starlight/zedge-dl', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     let url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -2789,8 +3348,7 @@ app.get('/starlight/zedge-dl', async (req, res) => {
 
 
 app.get('/starlight/pinterest-search', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const text = req.query.text;
     if (!text) {
         res.setHeader('Content-Type', 'application/json');
@@ -2850,8 +3408,10 @@ app.get('/starlight/pinterest-search', async (req, res) => {
 });
 
 app.get('/starlight/turbo-ai', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+     stats.requests++;
+     fs.writeFileSync(statsFilePath, JSON.stringify(stats, null, 4));
+     obtenerDatosUsuario(req);
+     ghpublish();
     const content = req.query.content;
     const text = req.query.text;
     
@@ -2887,8 +3447,7 @@ app.get('/starlight/turbo-ai', async (req, res) => {
 
 
 app.get('/starlight/tiktoksearch', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     let text = req.query.text;
     if (!text) {
         res.setHeader('Content-Type', 'application/json');
@@ -2907,8 +3466,7 @@ app.get('/starlight/tiktoksearch', async (req, res) => {
 
 
 app.get('/starlight/like-downloader', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -2942,8 +3500,7 @@ app.get('/starlight/like-downloader', async (req, res) => {
 });
 
 app.get('/starlight/transcribir-youtube', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     let url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -2965,8 +3522,7 @@ app.get('/starlight/transcribir-youtube', async (req, res) => {
 });
 
 app.get("/starlight/gemini", async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   try {
     const { default: Gemini } = await import("gemini-ai")
     const gemini = new Gemini("AIzaSyAHWF177Syns4TY3DLL9Z_0RNRYPpd5NBs")
@@ -3001,8 +3557,7 @@ app.get("/starlight/gemini", async (req, res) => {
 })
 
 app.get('/starlight/tweeter-stalk', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   let text = req.query.text;
   if (!text) {
     const errorResponse = {
@@ -3066,8 +3621,7 @@ app.get('/starlight/tweeter-stalk', async (req, res) => {
 
 
 app.get('/starlight/tiktok2', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req); 
   const { url } = req.query;
   let tiktokUrl = `https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(url)}`;
   try {
@@ -3112,8 +3666,7 @@ app.get('/starlight/tiktok2', async (req, res) => {
 })
 
 app.get('/starlight/soundcloud-search', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   let text = req.query.text;
   if (!text) {
     return res.status(400).json({ error: 'falta parámetro text' });
@@ -3163,8 +3716,7 @@ app.get('/starlight/soundcloud-search', async (req, res) => {
 
         
 app.get('/starlight/chochox', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req); 
     const url = req.query.url;
 
     if (!url) {
@@ -3215,8 +3767,7 @@ app.get('/starlight/chochox', async (req, res) => {
 
 app.get('/starlight/facebook', async (req, res) => {
   try {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url
     if (!url) {
       return res.status(400).json({ error: 'falta parametro url' });
@@ -3229,60 +3780,9 @@ app.get('/starlight/facebook', async (req, res) => {
     res.status(500).json({ error: '://' })
   }
 })
-/*app.get('/starlight/facebook', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
-  const { url } = req.query;
-  if (!url) {
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    return res.status(400).end(JSON.stringify({ error: 'falta el parametro url' }, null, 2));
-  }
-  
-  try {
-    const config = {
-      id: url,
-      locale: 'id'
-    };
-    const { data } = await axios('https://getmyfb.com/process', {
-      method: 'POST',
-      data: new URLSearchParams(Object.entries(config)),
-      headers: {
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",
-        "cookie": "PHPSESSID=914a5et39uur28e84t9env0378; popCookie=1; prefetchAd_4301805=true"
-      }
-    });
 
-    const $ = cheerio.load(data);
-    const title = $('div.container > div.results-item > div.results-item-text').text().trim();
-    const hd = $('div.container > div.results-download > ul > li:nth-child(1) > a').attr('href');
-    const sd = $('div.container > div.results-download > ul > li:nth-child(2) > a').attr('href');
-
-    const response = {
-      creator: "@Samush_$",
-      title: title || '',
-      hd: hd || '',
-      sd: sd || ''
-    };
-
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-
-    if (hd || sd) {
-      res.status(200).end(JSON.stringify(response, null, 2));
-    } else {
-      res.status(404).end(JSON.stringify({ error: "no se encontró el enlace" }, null, 2));
-    }
-  } catch (e) {
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.status(500).end(JSON.stringify({ error: "://" }, null, 2));
-  }
-});
-*/
 app.get('/starlight/Twitter-Posts', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   try {
     const text = req.query.text;
     if (!text) {
@@ -3329,8 +3829,7 @@ app.get('/starlight/Twitter-Posts', async (req, res) => {
 
 
 app.get('/starlight/tiktok', async (req, res) => {  
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     let url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -3375,8 +3874,7 @@ app.get('/starlight/tiktok', async (req, res) => {
 
 
 app.get('/starlight/chatgpt', (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   let { Hercai } = require('hercai');
   let herc = new Hercai();
   let { text } = req.query;
@@ -3402,8 +3900,7 @@ app.get('/starlight/chatgpt', (req, res) => {
 
 
 app.get('/starlight/turbo-gpt', (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
   let { Hercai } = require('hercai');
   let herc = new Hercai();
   let { text } = req.query;
@@ -3430,8 +3927,7 @@ app.get('/starlight/turbo-gpt', (req, res) => {
 
 
 app.get('/starlight/instagram-DL', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url;
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' })
@@ -3448,8 +3944,7 @@ app.get('/starlight/instagram-DL', async (req, res) => {
 
 
 app.get('/starlight/soundcloud', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url;
     if (!url) {
         res.setHeader('Content-Type', 'application/json');
@@ -3496,8 +3991,7 @@ app.get('/starlight/soundcloud', async (req, res) => {
 });
 
 app.get('/starlight/chochox/search', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const text = req.query.text;
     
     if (!text) {
@@ -3548,8 +4042,7 @@ app.get('/starlight/chochox/search', async (req, res) => {
 
 
 app.get('/starlight/pindl', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     let url = req.query.url
     if (!url) {
         return res.status(400).json({ error: 'falta parametro url' })
@@ -3567,8 +4060,7 @@ app.get('/starlight/pindl', async (req, res) => {
 })
 
 app.get('/starlight/mangadl', async (req, res) => {
-    stats.requests++;
-    fs.writeFileSync(statsFilePath, JSON.stringify(stats));  
+    actualizarStats(req);
     const url = req.query.url;
     
     if (!url) {
@@ -3590,6 +4082,50 @@ app.get('/starlight/mangadl', async (req, res) => {
         res.status(500).json({ error: '://' });
     }
 });
+
+
+
+
+
+
+async function ghpublish() {
+    const repoOwner = "KrizDavidFdez";
+    const repoName = "json";
+    const filePath = "stats.json";
+    const githubToken = "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";
+    try {
+        const fileContent = fs.readFileSync(statsFilePath, "utf-8");
+        const encodedContent = Buffer.from(fileContent).toString("base64");
+        let sha = null;
+        try {
+            const { data: fileData } = await axios.get(
+                `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`,
+                { headers: { Authorization: `Bearer ${githubToken}` } }
+            );
+            sha = fileData.sha;
+        } catch (error) {
+                return;
+            }
+        await axios.put(
+            `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`,
+            {
+                message: `Auto-update stats.json - ${new Date().toISOString()}`,
+                content: encodedContent,
+                sha: sha || undefined
+            },
+            { headers: { Authorization: `Bearer ${githubToken}` } }
+        );
+    } catch (error) {
+    }
+}
+
+
+
+
+
+
+
+
 
 
 
