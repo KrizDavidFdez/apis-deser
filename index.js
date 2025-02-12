@@ -300,72 +300,62 @@ async function getLyrics(query) {
     }
 }
 
+const axios = require('axios');
+
 const tikSearch = async (text) => {
   try {
     const res = await axios.post(
-      domain + "/api/feed/search",
-      {},
+      'https://www.tikwm.com/api/feed/search',
+      new URLSearchParams({
+        keywords: text,
+        count: 50,
+        cursor: 0,
+        web: 1,
+        hd: 1,
+      }),
       {
         headers: {
-          accept: "application/json, text/javascript, */*; q=0.01",
-          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-          "sec-ch-ua":
-            '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
-          "user-agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
-        },
-        params: {
-          keywords: text,
-          count: 50,
-          cursor: 0,
-          web: 1,
-          hd: 1,
-        },
+          'accept': 'application/json, text/javascript, */*; q=0.01',
+          'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'sec-ch-ua': '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
+          'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36',
+        }
       }
     );
 
     const videos = res.data?.data?.videos;
     if (!videos || videos.length < 1) {
-      return {
-        status: 200,
-        data: [],
-      };
+      return { status: 200, data: [] };
     }
 
-    const updatedVideos = videos.map((video) => {
-      const url = `https://www.tiktok.com/@${video.author.unique_id}/video/${video.id}`;
-      return {
-        creator: 'Samu',
+    return {
+      creator: "@Samush$_",
+      status: 200,
+      data: videos.map((video) => ({
+        author: video.author.unique_id,
         video_id: video.id,
         region: video.region,
         title: video.title,
-        cover: domain + "/video/cover/" + video.id + ".webp",
+        cover: `https://www.tikwm.com/video/cover/${video.id}.webp`,
         duration: video.duration,
         id: video.id,
-        url: url,
+        url: `https://www.tiktok.com/@${video.author.unique_id}/video/${video.id}`,
         views: video.play_count,
         likes: video.digg_count,
         comments: video.comment_count,
         share: video.share_count,
         create_time: video.create_time,
         download: video.download_count,
-        nowm: domain + "/video/media/play/" + video.id + ".mp4",
-        wm: domain + "/video/media/wmplay/" + video.id + ".mp4",
-        music: domain + "/video/music/" + video.id + ".mp3",
-      };
-    });
-
-    return {
-      status: 200,
-      data: updatedVideos,
+        nowm: `https://www.tikwm.com/video/media/play/${video.id}.mp4`,
+        wm: `https://www.tikwm.com/video/media/wmplay/${video.id}.mp4`,
+        music: `https://www.tikwm.com/video/music/${video.id}.mp3`,
+      })),
     };
   } catch (error) {
-    return {
-      status: 404,
-      msg: error?.message,
-    };
+    return { status: 404, msg: error?.message };
   }
 };
+
 
 function updateUrls(obj) {
   const regex =
