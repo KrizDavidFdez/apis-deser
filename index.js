@@ -300,8 +300,6 @@ async function getLyrics(query) {
     }
 }
 
-const axios = require('axios');
-
 const tikSearch = async (text) => {
   try {
     const res = await axios.post(
