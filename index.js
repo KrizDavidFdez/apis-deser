@@ -1966,8 +1966,8 @@ async function ytplayslist(playlistUrl) {
       videos.push({
         number: num,
         title: title,
-        downloadLink: youtubeLink,  
-        imageUrl: imageUrl  
+        thumbnail: imageUrl,
+        url: youtubeLink
       });
     });
     const creator = "@Samush$_";
@@ -1995,7 +1995,7 @@ app.listen(port, () => {
 const statsFilePath = path.join(__dirname, 'stats.json');
 
 if (!fs.existsSync(statsFilePath)) {
-    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 2097927 }));
+    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 2559763 }));
 }
 
 let stats = JSON.parse(fs.readFileSync(statsFilePath));
