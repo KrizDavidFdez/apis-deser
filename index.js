@@ -1771,7 +1771,83 @@ async function Igstorys(username) {
 }
 
 
-async function ytdls(youtubeUrl) {
+
+async function ytdls(query, desiredQuality) {
+    const searchUrl = "https://ssvid.net/api/ajax/search";
+    const convertUrl = "https://ssvid.net/api/ajax/convert";
+
+    try {
+        const searchBody = `query=${encodeURIComponent(query)}&vt=home`;
+        const searchResponse = await fetch(searchUrl, {
+            method: "POST",
+            headers: {
+                "accept": "*/*",
+                "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+            },
+            body: searchBody
+        });
+        const searchData = await searchResponse.json();
+        const vid = searchData.vid;
+        const title = searchData.title;
+        const highQualityThumbnail = `https://img.youtube.com/vi/${vid}/maxresdefault.jpg`;
+        const mediumQualityThumbnail = `https://img.youtube.com/vi/${vid}/sddefault.jpg`;
+        const lowQualityThumbnail = `https://img.youtube.com/vi/${vid}/default.jpg`;
+        let thumbnailUrl = highQualityThumbnail;
+        const highResponse = await fetch(highQualityThumbnail).catch(() => '');
+        if (!highResponse || !highResponse.ok) {
+            const mediumResponse = await fetch(mediumQualityThumbnail).catch(() => '');
+            if (mediumResponse && mediumResponse.ok) {
+                thumbnailUrl = mediumQualityThumbnail;
+            } else {
+                thumbnailUrl = lowQualityThumbnail;
+            }
+        }
+        const qualityMap = {
+            "360p": "134",
+            "720p": "136",
+            "1080p": "137",
+            "128kbps": "mp3128"
+        };
+
+        const qualityKey = qualityMap[desiredQuality];
+
+        const links = {
+            mp4: JSON.stringify(searchData.links.mp4),
+            mp3: JSON.stringify(searchData.links.mp3)
+        };
+
+        const parsedLinks = {
+            mp4: JSON.parse(links.mp4),
+            mp3: JSON.parse(links.mp3)
+        };
+
+        const videoQuality = parsedLinks.mp4[qualityKey] || parsedLinks.mp3[qualityKey];
+
+        const { k, size } = videoQuality;
+        const convertBody = `vid=${vid}&k=${encodeURIComponent(k)}`;
+        const convertResponse = await fetch(convertUrl, {
+            method: "POST",
+            headers: {
+                "accept": "*/*",
+                "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+            },
+            body: convertBody
+        });
+        const conversionResult = await convertResponse.json();
+        return {
+            creator: "@Samush$_",
+            data: {
+                title,
+                size,
+                thumbnail: thumbnailUrl,
+                vid,
+                dl_url: conversionResult.dlink
+            }
+        };
+    } catch (error) {
+    }}
+
+/*async function ytdls(youtubeUrl) {
     try {
         const encodedUrl = encodeURIComponent(youtubeUrl);
         const response = await axios.get(`https://y2mp3.biz/backend1.php?id=${encodedUrl}`);
@@ -1791,9 +1867,9 @@ async function ytdls(youtubeUrl) {
         };
      return data;
     } catch (error) {
-    }}
+    }}*/
 
-async function ytvs(url) {
+/*async function ytvs(url) {
   var ejec = (url) => (url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=))([a-zA-Z0-9_-]{11})/) || [])[1];
   var sizes = (bytes) => bytes >= 1073741824 ? (bytes / 1073741824).toFixed(2) + ' GB' : bytes >= 1048576 ? (bytes / 1048576).toFixed(2) + ' MB' : bytes >= 1024 ? (bytes / 1024).toFixed(2) + ' KB' : bytes + ' B';
   var timestamp = (seconds) => [
@@ -1816,7 +1892,7 @@ async function ytvs(url) {
       headers: {
         'cache-control': 'public, max-age=31536000, stale-if-error=60',
         'content-type': 'application/json; charset=utf-8',
-        'Accept': 'application/json, text/plain, */*',
+        'Accept': 'application/json, text/plain, ',
         'User-Agent': 'Mozilla/5.0 (Linux; U; Android 12; es; moto g22 Build/STAS32.79-77-28-63-3) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/110.0.0.0 Mobile Safari/537.36',
         'Referer': 'https://flv-to.com/en13/download'
       },
@@ -1834,7 +1910,7 @@ async function ytvs(url) {
   } catch (error) {
     return { error: '://' }
   }
-}
+}*/
 
 async function igsdl(postUrl) {
   try {
@@ -2368,6 +2444,91 @@ async function UploadPuticu(fileUrl) {
     }
   } catch (error) {
   }}
+  
+  async function generateImage(captionInput) {
+  const url = "https://artbit.ai/api/generateImage";
+  const options = {
+    method: "POST",
+    headers: {
+      "accept": "*/*",
+      "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+      "cache-control": "no-cache",
+      "content-type": "application/json",
+      "pragma": "no-cache",
+      "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+      "sec-ch-ua-mobile": "?1",
+      "sec-ch-ua-platform": "\"Android\"",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "same-origin",
+      "Referer": "https://artbit.ai/",
+      "Referrer-Policy": "strict-origin-when-cross-origin"
+    },
+    body: JSON.stringify({
+      captionInput: captionInput,
+      captionModel: "sdxl",
+      selectedRatio: "1024",
+      selectedSamples: "1",
+      negative_prompt: ""
+    })
+  }
+  try {
+    const response = await fetch(url, options);
+    const data = await response.json();
+    const imageUrl = data.imgs[0]; 
+    return {
+      creator: "@Samush",
+      data: { image: imageUrl }
+    };
+  } catch (error) {
+  }}
+  
+async function textoimage2(prompt) {
+    const url = `https://1yjs1yldj7.execute-api.us-east-1.amazonaws.com/default/ai_image?prompt=${prompt}&aspect_ratio=Select%20Aspect%20Ratio&link=writecream.com`;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+            return { creator: "@Samush$_", data: { image: data.image_link } };
+    } catch (error) {
+    }}
+    
+app.get('/starlight/txt-to-image2', async (req, res) => {
+    actualizarStats(req);
+    let text = req.query.text;
+    if (!text) {
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(400).end(JSON.stringify({ error: true, message: "falta el parametro text" }, null, 2));
+    }
+
+    try {
+        let result = await textoimage2(text);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(result, null, 2));
+    } catch (error) {
+        res.setHeader('Content-Type', 'application/json');
+        res.status(500).end(JSON.stringify({ error: "://" }, null, 2));
+    }
+});  
+
+      
+app.get('/starlight/txt-to-image', async (req, res) => {
+    actualizarStats(req);
+    let text = req.query.text;
+    if (!text) {
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(400).end(JSON.stringify({ error: true, message: "falta el parametro text" }, null, 2));
+    }
+
+    try {
+        let result = await generateImage(text);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(result, null, 2));
+    } catch (error) {
+        res.setHeader('Content-Type', 'application/json');
+        res.status(500).end(JSON.stringify({ error: "://" }, null, 2));
+    }
+});  
 
 
 app.get('/starlight/uploader-put', async (req, res) => {
@@ -3013,29 +3174,30 @@ app.get('/starlight/youtube-mp3', async (req, res) => {
     }
 
     try {
-        const details = await ytdls(url);
+      const desiredQuality = "128kbps"; 
+        const result = await ytdls(url, desiredQuality);
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.status(200).send(JSON.stringify(details, null, 4));
+        res.status(200).send(JSON.stringify(result, null, 4));
     } catch (error) {
         res.status(500).json({ error: '://' });
     }
 });
 
 app.get('/starlight/youtube-mp4', async (req, res) => {
-    actualizarStats(req);
-  const url = req.query.url
-  if (!url) {
-    return res.status(400).json({ error: 'falta parametro url' })
-  }
-  try {
-    const result = await ytvs(url);
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.status(200).send(JSON.stringify(result, null, 4));
-  } catch (error) {
-    res.status(500).json({ error: '://' });
-  }
+    const url = req.query.url;
+    const desiredQuality = req.query.q || ""; 
+    if (!url) {
+        return res.status(400).json({ error: 'falta parametro url' });
+    }
+    try {
+        const result = await ytdls(url, desiredQuality);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).send(JSON.stringify(result, null, 4));
+    } catch (error) {
+        res.status(500).json({ error: '://' });
+    }
 });
 
 app.get('/starlight/Ifunny-dl', async (req, res) => {
