@@ -10,6 +10,8 @@ require('moment/locale/es');
 const qs = require("qs");
 const https = require('https');
 const express = require("express")
+const NodeID3 = require('node-id3')
+const https = require('https')
 async function getTinyURL(longURL) {
     try {
         let response = await axios.get(`https://tinyurl.com/api-create.php?url=${longURL}`);
@@ -1772,7 +1774,7 @@ async function Igstorys(username) {
 
 
 
-async function ytdls(query, desiredQuality) {
+/*async function ytdls(query, desiredQuality) {
     const searchUrl = "https://ssvid.net/api/ajax/search";
     const convertUrl = "https://ssvid.net/api/ajax/convert";
     const searchBody = `query=${encodeURIComponent(query)}&vt=home`;
@@ -1781,7 +1783,7 @@ async function ytdls(query, desiredQuality) {
         const searchResponse = await fetch(searchUrl, {
             method: "POST",
             headers: {
-                "accept": "*/*",
+                "accept": "",
                 "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
             },
             body: searchBody
@@ -1816,7 +1818,7 @@ async function ytdls(query, desiredQuality) {
         const convertResponse = await fetch(convertUrl, {
             method: "POST",
             headers: {
-                "accept": "*/*",
+                "accept": "",
                 "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
             },
             body: convertBody
@@ -1836,6 +1838,82 @@ async function ytdls(query, desiredQuality) {
         };
     } catch (error) {
         
+    }
+}*/
+
+async function ytdls(query, desiredQuality) {
+    try {
+        var search = await fetch("https://ssvid.net/api/ajax/search", {
+            method: "POST",
+            headers: {
+                "accept": "",
+                "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+            },
+            body: `query=${encodeURIComponent(query)}&vt=home`
+        });
+        var datas = await search.json();
+        var vid = datas.vid;
+        var title = datas.title;
+        var qualityMap = {
+            "360p": "134",
+            "720p": "136",
+            "1080p": "137",
+            "128kbps": "mp3128"
+        };
+        var q = qualityMap[desiredQuality]
+        var links = {
+            mp4: JSON.stringify(datas.links.mp4),
+            mp3: JSON.stringify(datas.links.mp3)
+        }
+        var pars = {
+            mp4: JSON.parse(links.mp4),
+            mp3: JSON.parse(links.mp3)
+        }
+        var qs = pars.mp4[q] || pars.mp3[q];
+        var { k } = qs;
+        var cvn = await fetch("https://ssvid.net/api/ajax/convert", {
+            method: "POST",
+            headers: {
+                "accept": "",
+                "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+            },
+            body: `vid=${vid}&k=${encodeURIComponent(k)}`
+        })
+        var reset = await cvn.json()
+        var thumb = `https://img.youtube.com/vi/${vid}/hqdefault.jpg`
+        var rss = await fetch(reset.dlink)
+        var audio = await rss.buffer()
+        let fins
+        if (desiredQuality === '128kbps') {
+            var tags = {
+                title: title,
+                artist: "•  塞缪尔和安吉拉 ",
+                year: new Date().getFullYear(),
+                image: await new Promise((resolve, reject) => {
+                    https.get(thumb, (response) => {
+                        var chunks = []
+                        response.on('data', chunk => chunks.push(chunk))
+                        response.on('end', () => resolve(Buffer.concat(chunks)))
+                        response.on('error', reject);
+                    })
+                })
+            }
+            fins = NodeID3.write(tags, audio)
+        } else {
+            fins = audio
+        }
+        return {
+            creator: "@Samush$_",
+            data: {
+                title,
+                size: qs.size,
+                thumbnail: thumb,
+                id: vid,
+                format: fins 
+            }
+        }
+    } catch (error) {
+        return ""
     }
 }
 
