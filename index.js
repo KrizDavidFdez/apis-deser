@@ -11,7 +11,7 @@ const qs = require("qs");
 const https = require('https');
 const express = require("express")
 const NodeID3 = require('node-id3')
-//const https = require('https')
+const https = require('https')
 async function getTinyURL(longURL) {
     try {
         let response = await axios.get(`https://tinyurl.com/api-create.php?url=${longURL}`);
@@ -1841,82 +1841,85 @@ async function Igstorys(username) {
     }
 }*/
 
-async function ytdls(query, desiredQuality) {
-    try {
-        var search = await fetch("https://ssvid.net/api/ajax/search", {
-            method: "POST",
-            headers: {
-                "accept": "",
-                "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-            },
-            body: `query=${encodeURIComponent(query)}&vt=home`
-        });
-        var datas = await search.json();
-        var vid = datas.vid;
-        var title = datas.title;
-        var qualityMap = {
-            "360p": "134",
-            "720p": "136",
-            "1080p": "137",
-            "128kbps": "mp3128"
-        };
-        var q = qualityMap[desiredQuality]
-        var links = {
-            mp4: JSON.stringify(datas.links.mp4),
-            mp3: JSON.stringify(datas.links.mp3)
-        }
-        var pars = {
-            mp4: JSON.parse(links.mp4),
-            mp3: JSON.parse(links.mp3)
-        }
-        var qs = pars.mp4[q] || pars.mp3[q];
-        var { k } = qs;
-        var cvn = await fetch("https://ssvid.net/api/ajax/convert", {
-            method: "POST",
-            headers: {
-                "accept": "",
-                "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-            },
-            body: `vid=${vid}&k=${encodeURIComponent(k)}`
-        })
-        var reset = await cvn.json()
-        var thumb = `https://img.youtube.com/vi/${vid}/hqdefault.jpg`
-        var rss = await fetch(reset.dlink)
-        var audio = await rss.buffer()
-        let fins
-        if (desiredQuality === '128kbps') {
-            var tags = {
-                title: title,
-                artist: "•  塞缪尔和安吉拉 ",
-                year: new Date().getFullYear(),
-                image: await new Promise((resolve, reject) => {
-                    https.get(thumb, (response) => {
-                        var chunks = []
-                        response.on('data', chunk => chunks.push(chunk))
-                        response.on('end', () => resolve(Buffer.concat(chunks)))
-                        response.on('error', reject);
-                    })
-                })
-            }
-            fins = NodeID3.write(tags, audio)
-        } else {
-            fins = audio
-        }
-        return {
-            creator: "@Samush$_",
-            data: {
-                title,
-                size: qs.size,
-                thumbnail: thumb,
-                id: vid,
-                format: fins 
-            }
-        }
-    } catch (error) {
-        return ""
+async function ytdls(videoUrl) {
+    async function shortlink(url) {
+        const response = await axios.get(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
+        return response.data;
     }
-}
+    const oembedResponse = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`, {
+        headers: {
+            "accept": "*/*",
+            "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+            "cache-control": "no-cache",
+            "pragma": "no-cache",
+            "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+            "sec-ch-ua-mobile": "?1",
+            "sec-ch-ua-platform": "\"Android\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "Referer": "https://y2meta.mobi/",
+            "Referrer-Policy": "strict-origin-when-cross-origin"
+        },
+        method: "GET"
+    });
 
+    const oembedData = await oembedResponse.json();
+    const downloadResponse = await fetch(`https://p.oceansaver.in/ajax/download.php?copyright=0&format=mp3&url=${encodeURIComponent(videoUrl)}&api=30de256ad09118bd6b60a13de631ae2cea6e5f9d`, {
+        headers: {
+            "accept": "*/*",
+            "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+            "cache-control": "no-cache",
+            "pragma": "no-cache",
+            "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+            "sec-ch-ua-mobile": "?1",
+            "sec-ch-ua-platform": "\"Android\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "Referer": "https://y2meta.mobi/",
+            "Referrer-Policy": "strict-origin-when-cross-origin"
+        },
+        method: "GET"
+    });
+
+    const downloadData = await downloadResponse.json();
+    const downloadId = downloadData.id;
+    let progressData;
+    do {
+        const progressResponse = await fetch(`https://p.oceansaver.in/ajax/progress.php?id=${downloadId}`, {
+            headers: {
+                "accept": "*/*",
+                "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+                "cache-control": "no-cache",
+                "pragma": "no-cache",
+                "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+                "sec-ch-ua-mobile": "?1",
+                "sec-ch-ua-platform": "\"Android\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "cross-site"
+            },
+            referrer: "https://y2meta.mobi/",
+            referrerPolicy: "strict-origin-when-cross-origin",
+            method: "GET"
+        });
+        progressData = await progressResponse.json();
+    } while (progressData.progress < 1000);
+    const tinyUrl = await shortlink(progressData.download_url);
+
+    return {
+        creator: "@Samush$_",
+        data: {
+            title: oembedData.title,
+            author_name: oembedData.author_name,
+            thumbnail: oembedData.thumbnail_url,
+            author_url: oembedData.author_url,
+            provider: oembedData.provider_url,
+            dl_url: tinyUrl 
+        }
+    };
+}
 /*async function ytdls(youtubeUrl) {
     try {
         const encodedUrl = encodeURIComponent(youtubeUrl);
