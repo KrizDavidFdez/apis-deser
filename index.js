@@ -3238,7 +3238,7 @@ app.get('/starlight/youtube-search', async (req, res) => {
 });
 
 
-app.get('/starlight/youtube-mp3', async (req, res) => {
+/*app.get('/starlight/youtube-mp3', async (req, res) => {
     actualizarStats(req);
     const url = req.query.url;
 
@@ -3254,6 +3254,26 @@ app.get('/starlight/youtube-mp3', async (req, res) => {
         res.status(200).send(JSON.stringify(result, null, 4));
     } catch (error) {
         res.status(500).json({ error: '://' });
+    }
+});*/
+app.get('/starlight/youtube-mp3', async (req, res) => {
+    actualizarStats(req);
+    const url = req.query.url;
+     if (!url) {
+        return res.status(400).json({ error: 'falta el parametro url' });
+    }
+    try {
+        let data;
+        try {
+            data = await ytdls(url);
+        } catch (error) {
+            data = await ytdls(url);
+        }
+         res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).send(JSON.stringify(data, null, 4));
+    } catch (error) {
+         res.status(500).json({ error: '://' });
     }
 });
 
