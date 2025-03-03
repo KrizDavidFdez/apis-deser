@@ -10,7 +10,7 @@ require('moment/locale/es');
 const qs = require("qs");
 //const https = require('https');
 const express = require("express")
-const NodeID3 = require('node-id3')
+//const NodeID3 = require('node-id3')
 const https = require('https')
 async function getTinyURL(longURL) {
     try {
@@ -2556,6 +2556,174 @@ async function UploadPuticu(fileUrl) {
   } catch (error) {
   }}
   
+async function user_search(search) {
+  try {
+    var sv = await fetch(`https://www.instagram.com/api/v1/web/search/topsearch/?context=blended&include_reel=true&query=${search}&rank_token=0.4968593204932452&search_surface=web_top_search`, {
+      method: 'GET',
+      headers: { 
+        "accept": "*/*",
+        "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+        "cache-control": "no-cache",
+        "pragma": "no-cache",
+        "sec-ch-prefers-color-scheme": "dark",
+        "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+        "sec-ch-ua-full-version-list": "\"Not A(Brand\";v=\"8.0.0.0\", \"Chromium\";v=\"132.0.6961.0\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-model": "\"moto g22\"",
+        "sec-ch-ua-platform": "\"Android\"",
+        "sec-ch-ua-platform-version": "\"12.0.0\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "x-asbd-id": "359341",
+        "x-csrftoken": "oe6rUCXHjY4Q0ISYwxsBM118maGsEOaD",
+        "x-ig-app-id": "1217981644879628",
+        "x-ig-www-claim": "hmac.AR2KEIGdg-TqI303z71RfZF14DoLGdd-wTUCVffFnHtsn1vj",
+        "x-requested-with": "XMLHttpRequest",
+        "x-web-session-id": "3mrdct:app18p:xh9t38",
+        "cookie": "ig_did=84FFAF35-8E1E-4DBE-B6C6-44A769D144B8; datr=ezOdZ0hBjC9aGECWBWzlW_PT; ps_l=1; ps_n=1; ig_nrcb=1; ds_user_id=67898059497; mid=Z7U4mwABAAEJz1NXqTCcHYWr0wcB; dpr=1.3603438138961792; sessionid=67898059497%3Ad5POSDVgiQ6jHF%3A7%3AAYfw_Wo3orNUegCX4H6jfwb_QPxlxhyOv6Z4Q6ykWg; wd=529x656; rur=\"NCG\\05467898059497\\0541772350686:01f739546810f696ab25d74e55dcf72dfbb586d3ceb264411ccb0ee77dbe2bbf528d8dc8\"",
+        "Referer": "https://www.instagram.com/explore/search/",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+      }
+    })
+    var data = await sv.json()
+    const usersArray = data.users.map(user => ({
+      username: user.user.username,
+      full_name: user.user.full_name,
+      is_private: user.user.is_private,
+      profile: user.user.profile_pic_url,
+      verified: user.user.is_verified,
+      url: "https://instagram.com/" + user.user.username
+    }))
+    return {
+      creator: "@Samush$_",
+      data: usersArray
+    }
+  } catch (error) {
+  }}
+  
+  async function x_search(txt) {
+  const url = "https://x.com/i/api/graphql/U3QTLwGF8sZCHDuWIMSAmg/SearchTimeline";
+
+  const variables = {
+    rawQuery: `${txt}`,
+    count: 50,
+    querySource: "typed_query",
+    product: "Top"
+  }
+
+  const features = {
+    profile_label_improvements_pcf_label_in_post_enabled: true,
+    rweb_tipjar_consumption_enabled: true,
+    responsive_web_graphql_exclude_directive_enabled: true,
+    verified_phone_label_enabled: false,
+    creator_subscriptions_tweet_preview_api_enabled: true,
+    responsive_web_graphql_timeline_navigation_enabled: true,
+    responsive_web_graphql_skip_user_profile_image_extensions_enabled: false,
+    premium_content_api_read_enabled: false,
+    communities_web_enable_tweet_community_results_fetch: true,
+    c9s_tweet_anatomy_moderator_badge_enabled: true,
+    responsive_web_grok_analyze_button_fetch_trends_enabled: false,
+    responsive_web_grok_analyze_post_followups_enabled: true,
+    responsive_web_jetfuel_frame: false,
+    responsive_web_grok_share_attachment_enabled: true,
+    articles_preview_enabled: true,
+    responsive_web_edit_tweet_api_enabled: true,
+    graphql_is_translatable_rweb_tweet_is_translatable_enabled: true,
+    view_counts_everywhere_api_enabled: true,
+    longform_notetweets_consumption_enabled: true,
+    responsive_web_twitter_article_tweet_consumption_enabled: true,
+    tweet_awards_web_tipping_enabled: false,
+    responsive_web_grok_analysis_button_from_backend: false,
+    creator_subscriptions_quote_tweet_preview_enabled: false,
+    freedom_of_speech_not_reach_fetch_enabled: true,
+    standardized_nudges_misinfo: true,
+    tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled: true,
+    rweb_video_timestamps_enabled: true,
+    longform_notetweets_rich_text_read_enabled: true,
+    longform_notetweets_inline_media_enabled: true,
+    responsive_web_grok_image_annotation_enabled: true,
+    responsive_web_enhance_cards_enabled: false
+  };
+
+  const params = new URLSearchParams({
+    variables: JSON.stringify(variables),
+    features: JSON.stringify(features)
+  });
+
+  const options = {
+    method: 'GET',
+    headers: {
+      'accept': '*/*',
+      'accept-language': 'es-US,es-419;q=0.9,es;q=0.8',
+      'authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA',
+      'cache-control': 'no-cache',
+      'content-type': 'application/json',
+      'pragma': 'no-cache',
+      'sec-ch-ua': '"Not A(Brand";v="8", "Chromium";v="132"',
+      'sec-ch-ua-mobile': '?1',
+      'sec-ch-ua-platform': '"Android"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-origin',
+      'x-client-transaction-id': 'vXH+6uHu8i3ZYtbBDgTCdZFHWEaqCo6xqjcIwpJ0L0Rqcu3q+IHY/hLr2hAEyq/aAM4IyL7ckrO/HTGIjd9qNsGeiVt9vg',
+      'x-client-uuid': 'e0f0e1be-d958-4837-991b-f8751e73c7e9',
+      'x-csrf-token': 'c49dfbddf8dbe47bbc8a08fff9e6948ae6b2391fff3bc124434d1465343aaa391c2b5b645bcd076d4f17b3cec7e3e0c959218401cfa3ffc5486b23676fba98927abb543e0d30b1462233ccf8536698bc',
+      'x-twitter-active-user': 'yes',
+      'x-twitter-auth-type': 'OAuth2Session',
+      'x-twitter-client-language': 'es',
+      'cookie': 'guest_id_marketing=v1%3A174097011507491500; guest_id_ads=v1%3A174097011507491500; guest_id=v1%3A174097011507491500; gt=1896392228093775935; external_referer=padhuUp37ziB1mb6tX%2Bb05GcyPv53d7c|0|8e8t2xd8A2w%3D; g_state={"i_l":0}; kdt=c5gna9HxC5HdslDWFjoNqouHTHpIloSR3mv0WMze; auth_token=ff8047ece836072d4b0425f07f9520de3f8f2b66; ct0=c49dfbddf8dbe47bbc8a08fff9e6948ae6b2391fff3bc124434d1465343aaa391c2b5b645bcd076d4f17b3cec7e3e0c959218401cfa3ffc5486b23676fba98927abb543e0d30b1462233ccf8536698bc; twid=u%3D1688014800490487808; att=1-W8MDSzn5XXWSL8CFMzMmBecBjVm79qEURuyVlqYn; personalization_id="v1_VeAZATDEB2lgnCFPTF5adg=="; lang=es',
+      'Referer': 'https://x.com/search?q=hentai%20videos%20&src=typed_query',
+      'Referrer-Policy': 'strict-origin-when-cross-origin'
+    }
+  };
+
+  try {
+    const response = await fetch(`${url}?${params.toString()}`, options);
+    const data = await response.json();
+    const allEntries = data?.data?.search_by_raw_query?.search_timeline?.timeline?.instructions
+      ?.flatMap(instruction => instruction.entries) || [];
+    const result = {
+  creator: "@Samush$_",
+  data: allEntries.map(entry => {
+    const tweet = entry?.content?.itemContent?.tweet_results?.result;
+    const user = tweet?.core?.user_results?.result;
+    if (!tweet || !user) return null; // Si falta información clave, ignorar este tweet.
+
+    const urlsArray = tweet?.legacy?.entities?.media?.map(m => m.expanded_url) || [];
+    const urls = [...new Set(urlsArray)];
+    const singleUrl = urls.length > 0 ? urls[0] : "";
+
+    const tweetData = {
+      user_id: user?.rest_id,
+      user_name: user?.legacy?.name,
+      verified: user?.is_blue_verified,
+      user_desc: user?.legacy?.description,
+      screen_name: user?.legacy?.screen_name,
+      profile: user?.legacy?.profile_image_url_https,
+      banner: user?.legacy?.profile_banner_url,
+      followers: user?.legacy?.followers_count,
+      following: user?.legacy?.friends_count,
+      caption: tweet?.legacy?.full_text.replace(/https:\/\/t\.co\/\S+/g, ''),
+      views: tweet?.views?.count,
+      likes: tweet?.legacy?.favorite_count,
+      shares: tweet?.legacy?.retweet_count,
+      comments: tweet?.legacy?.reply_count
+    };
+
+    if (singleUrl) {
+      tweetData.url = singleUrl;
+    }
+    return Object.values(tweetData).some(value => value !== undefined && value !== null) ? tweetData : null;
+  }).filter(item => item !== null) 
+};
+
+return result;
+  } catch (error) {
+  }
+}
+  
+  
 async function textoimage2(prompt) {
     const url = `https://1yjs1yldj7.execute-api.us-east-1.amazonaws.com/default/ai_image?prompt=${prompt}&aspect_ratio=Select%20Aspect%20Ratio&link=writecream.com`;
     
@@ -2565,6 +2733,43 @@ async function textoimage2(prompt) {
             return { creator: "@Samush$_", data: { image: data.image_link } };
     } catch (error) {
     }}
+    
+app.get('/starlight/tweets-search', async (req, res) => {
+    actualizarStats(req);
+    let text = req.query.text;
+    if (!text) {
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(400).end(JSON.stringify({ error: true, message: "falta el parametro text" }, null, 2));
+    }
+
+    try {
+        let result = await x_search(text);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(result, null, 2));
+    } catch (error) {
+        res.setHeader('Content-Type', 'application/json');
+        res.status(500).end(JSON.stringify({ error: "://" }, null, 2));
+    }
+});  
+    
+app.get('/starlight/Instagram-users', async (req, res) => {
+    actualizarStats(req);
+    let text = req.query.text;
+    if (!text) {
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(400).end(JSON.stringify({ error: true, message: "falta el parametro text" }, null, 2));
+    }
+
+    try {
+        let result = await user_search(text);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(result, null, 2));
+    } catch (error) {
+        res.setHeader('Content-Type', 'application/json');
+        res.status(500).end(JSON.stringify({ error: "://" }, null, 2));
+    }
+});  
+
     
 app.get('/starlight/txt-to-image2', async (req, res) => {
     actualizarStats(req);
