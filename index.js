@@ -2734,6 +2734,127 @@ async function textoimage2(prompt) {
     } catch (error) {
     }}
     
+    async function xdls(link) {
+    try {
+        var url = 'https://savetwitter.net/api/ajaxSearch'
+        var data = qs.stringify({
+            q: link,
+            lang: 'es'
+        })
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Access-Control-Allow-Origin': 'https'
+            }
+        }
+        var response = await axios.post(url, data, config)
+        var html = response.data.data
+        var $ = cheerio.load(html)
+        var isImage = $('.photo-list').length > 0
+        var isVideo = $('.dl-action p a').length > 0
+        if (isImage) {
+            var images = []
+            $('.photo-list ul.download-box li .download-items__thumb img').each((i, el) => {
+                var urls = $(el).attr('src')
+                images.push(urls)
+            })
+            return {
+                creator: '@Samush$_',
+                data: {
+                    images
+                }
+            }
+        } else if (isVideo) {
+            var thumbnail = $('.image-tw img').attr('src')
+            var video = $('.dl-action p a').first().attr('href')
+            var title = $('.content h3').text()
+            var duration = $('.content p').text()
+            return {
+                creator: '@Samush$_',
+                data: {
+                    title,
+                    duration,
+                    thumbnail,
+                    video
+                }
+            }
+        }
+    } catch (error) {
+    }
+}
+
+async function igdlss(url) {
+    try {
+        const response = await fetch("https://www.fastdl.live/api/search", {
+            method: "POST",
+            headers: {
+                "accept": "application/json, text/plain, */*",
+                "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+                "cache-control": "no-cache",
+                "content-type": "application/json",
+                "pragma": "no-cache",
+                "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+                "sec-ch-ua-mobile": "?1",
+                "sec-ch-ua-platform": "\"Android\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                "Referer": "https://www.fastdl.live/",
+                "Referrer-Policy": "strict-origin-when-cross-origin"
+            },
+            body: JSON.stringify({ url: url })
+        });
+
+        const data = await response.json();
+
+        if (data.success && Array.isArray(data.result)) {
+            return {
+                creator: "@Samush$_",
+                data: data.result.map(item => ({
+                    type: item.type,
+                    dl_url: item.downloadLink
+                }))
+            };
+        }
+    } catch (error) {
+    }
+}
+
+app.get('/starlight/instagram-dl', async (req, res) => {
+    actualizarStats(req);
+    const url = req.query.url;
+    if (!url) {
+        return res.status(400).json({ error: 'falta parametro url' })
+    }
+    try {
+        const result = await igdlss(url);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).send(JSON.stringify(result, null, 4));
+    } catch (error) {
+        res.status(500).json({ error: '://' });
+    }
+});
+
+
+app.get('/starlight/twitter-dl', async (req, res) => {
+  actualizarStats(req);  
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: "falta el parametro url" });
+  }
+  try {
+    const result = await xdls(url);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(JSON.stringify(result, null, 4));
+  } catch (error) {
+    res.status(500).json({ error: "://" });
+  }
+});
+    
+
 app.get('/starlight/tweets-search', async (req, res) => {
     actualizarStats(req);
     let text = req.query.text;
