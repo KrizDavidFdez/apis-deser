@@ -1459,7 +1459,46 @@ async function saveporn(url) {
   } catch (error) {
   }}
 
-async function snapdl(link) {
+async function snapdl(snapchatUrl) {
+  const apiUrl = "https://www.tikefy.com/api/pre_download?t=1741056548098";
+
+  const headers = {
+    "accept": "application/json, text/plain, ",
+    "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+    "cache-control": "no-cache",
+    "content-type": "application/json",
+    "pragma": "no-cache",
+    "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+    "sec-ch-ua-mobile": "?1",
+    "sec-ch-ua-platform": "\"Android\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "cross-site",
+    "Referer": "https://dl.valaok.com/",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  };
+
+  const body = JSON.stringify({
+    url: snapchatUrl,
+    download_type: "Snapchat"
+  });
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: headers,
+      body: body
+    })
+    const json = await response.json()
+    return {
+      creator: "@Samush$_",
+      data: {
+      url: "https://www.tikefy.com/api/download?sign=" + json.data?.sign || ""
+      }
+    }
+  } catch (error) {
+  }}
+/*async function snapdl(link) {
     try {
         var response = await axios.post('https://getindevice.com/wp-json/aio-dl/video-data/', {
             url: link
@@ -1493,7 +1532,7 @@ async function snapdl(link) {
     } catch (error) {
         
     }
-}
+}*/
 
 const modelos = {
     'en_mujer': 'en_us_001',
@@ -1841,14 +1880,14 @@ async function Igstorys(username) {
     }
 }*/
 
-async function ytdls(videoUrl) {
+/*async function ytdls(videoUrl) {
     async function shortlink(url) {
         const response = await axios.get(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
         return response.data;
     }
     const oembedResponse = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`, {
         headers: {
-            "accept": "*/*",
+            "accept": "",
             "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
             "cache-control": "no-cache",
             "pragma": "no-cache",
@@ -1867,7 +1906,7 @@ async function ytdls(videoUrl) {
     const oembedData = await oembedResponse.json();
     const downloadResponse = await fetch(`https://p.oceansaver.in/ajax/download.php?copyright=0&format=mp3&url=${encodeURIComponent(videoUrl)}&api=30de256ad09118bd6b60a13de631ae2cea6e5f9d`, {
         headers: {
-            "accept": "*/*",
+            "accept": "",
             "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
             "cache-control": "no-cache",
             "pragma": "no-cache",
@@ -1889,7 +1928,7 @@ async function ytdls(videoUrl) {
     do {
         const progressResponse = await fetch(`https://p.oceansaver.in/ajax/progress.php?id=${downloadId}`, {
             headers: {
-                "accept": "*/*",
+                "accept": "",
                 "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
                 "cache-control": "no-cache",
                 "pragma": "no-cache",
@@ -1919,7 +1958,127 @@ async function ytdls(videoUrl) {
             dl_url: tinyUrl 
         }
     };
-}
+}*/
+
+async function ytdlsa(videoUrl) {
+    try {
+        const response = await fetch("https://ytmp3.ing/audio", {
+            method: "POST",
+            headers: {
+                "accept": "*/*",
+                "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+                "cache-control": "no-cache",
+                "content-type": "multipart/form-data; boundary=----WebKitFormBoundary6bigBzTDfo8rsAUR",
+                "pragma": "no-cache",
+                "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+                "sec-ch-ua-mobile": "?1",
+                "sec-ch-ua-platform": "\"Android\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                "x-csrftoken": "YtkPVWoUBsiXW5i1LYLtVgwUWDOCmmgDPUypyLlig5W9Q0M4PaSbD8WBTRoGfkEj",
+                "cookie": "csrftoken=1BoKNZ7yPNOm45EdemhSS2AR7oKe38yQ",
+                "Referer": "https://ytmp3.ing/",
+                "Referrer-Policy": "same-origin"
+            },
+            body: `------WebKitFormBoundary6bigBzTDfo8rsAUR\r\nContent-Disposition: form-data; name="url"\r\n\r\n${videoUrl}\r\n------WebKitFormBoundary6bigBzTDfo8rsAUR--\r\n`
+        });
+        const audioData = await response.json();
+        const oembedResponse = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`, {
+            headers: {
+                "accept": "*/*",
+                "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+                "cache-control": "no-cache",
+                "pragma": "no-cache",
+                "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+                "sec-ch-ua-mobile": "?1",
+                "sec-ch-ua-platform": "\"Android\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "cross-site",
+                "Referer": "https://y2meta.mobi/",
+                "Referrer-Policy": "strict-origin-when-cross-origin"
+            },
+            method: "GET"
+        });
+
+        const oembedData = await oembedResponse.json();
+        async function shortlink(url) {
+        const response = await axios.get(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
+        return response.data;
+    }
+    const tinyUrl = await shortlink(audioData.url);
+        return {
+            creator: "@Samush$_",
+            data: {
+                title: oembedData.title,
+                author: oembedData.author_name,
+                thumbnail: oembedData.thumbnail_url,
+                dl_url: tinyUrl
+            }
+        }
+} catch (error) {
+}}
+
+async function ytdlsv(videoUrl) {
+    try {
+        const response = await fetch("https://ytmp3.ing/video", {
+            method: "POST",
+            headers: {
+                "accept": "*/*",
+                "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+                "cache-control": "no-cache",
+                "content-type": "multipart/form-data; boundary=----WebKitFormBoundary6bigBzTDfo8rsAUR",
+                "pragma": "no-cache",
+                "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+                "sec-ch-ua-mobile": "?1",
+                "sec-ch-ua-platform": "\"Android\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                "x-csrftoken": "YtkPVWoUBsiXW5i1LYLtVgwUWDOCmmgDPUypyLlig5W9Q0M4PaSbD8WBTRoGfkEj",
+                "cookie": "csrftoken=1BoKNZ7yPNOm45EdemhSS2AR7oKe38yQ",
+                "Referer": "https://ytmp3.ing/",
+                "Referrer-Policy": "same-origin"
+            },
+            body: `------WebKitFormBoundary6bigBzTDfo8rsAUR\r\nContent-Disposition: form-data; name="url"\r\n\r\n${videoUrl}\r\n------WebKitFormBoundary6bigBzTDfo8rsAUR--\r\n`
+        });
+        const audioData = await response.json();
+        const oembedResponse = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`, {
+            headers: {
+                "accept": "*/*",
+                "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+                "cache-control": "no-cache",
+                "pragma": "no-cache",
+                "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+                "sec-ch-ua-mobile": "?1",
+                "sec-ch-ua-platform": "\"Android\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "cross-site",
+                "Referer": "https://y2meta.mobi/",
+                "Referrer-Policy": "strict-origin-when-cross-origin"
+            },
+            method: "GET"
+        });
+
+        const oembedData = await oembedResponse.json();
+        async function shortlink(url) {
+        const response = await axios.get(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
+        return response.data;
+    }
+    const tinyUrl = await shortlink(audioData.url);
+        return {
+            creator: "@Samush$_",
+            data: {
+                title: oembedData.title,
+                author: oembedData.author_name,
+                thumbnail: oembedData.thumbnail_url,
+                dl_url: tinyUrl
+            }
+        }
+} catch (error) {
+}}
 /*async function ytdls(youtubeUrl) {
     try {
         const encodedUrl = encodeURIComponent(youtubeUrl);
@@ -2821,6 +2980,122 @@ async function igdlss(url) {
     }
 }
 
+
+async function snap_search(text) {
+    const url = `https://www.snapchat.com/explore/${text}`
+
+    const headers = {
+      "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,;q=0.8,application/signed-exchange;v=b3;q=0.7",
+      "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+      "cache-control": "no-cache",
+      "pragma": "no-cache",
+      "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+      "sec-ch-ua-mobile": "?1",
+      "sec-ch-ua-platform": "\"Android\"",
+      "sec-fetch-dest": "document",
+      "sec-fetch-mode": "navigate",
+      "sec-fetch-site": "same-origin",
+      "sec-fetch-user": "?1",
+      "upgrade-insecure-requests": "1",
+      "Referer": "https://www.snapchat.com/explore/Le-sserafim",
+      "Referrer-Policy": "strict-origin-when-cross-origin"
+    };
+
+    try {
+      const response = await fetch(url, { method: "GET", headers: headers });
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const results = [];
+
+    $(".SpotlightResult_spotlightCard__ZNwnu").each((index, element) => {
+      const videoLink = $(element).find(".SpotlightResult_thumbnail__XFNCz").attr("href");
+      const imageLink = $(element).find(".ImageTile_tileMedia__5vXqC").attr("src");
+      const description = $(element).find(".SpotlightResult_description__5B4T_").text().trim();
+      
+      if (videoLink || imageLink || description) {
+        results.push({
+          caption: description || "",
+          thumbnail: imageLink || "",
+          url: videoLink ? `${videoLink}` : ""
+        });
+      }
+    });
+
+      return {
+        creator: "@Samush$_",
+        data: results
+      };
+
+    } catch (error) {
+      return {
+        creator: "@Samush$_",
+        data: []
+      }
+    }
+  }
+  
+  async function DescribePicture(imageUrl, lang = "en") {
+  try {
+    async function translateText(text, lang) {
+      try {
+        let reis = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${encodeURIComponent(text)}`);
+        let res = await reis.json();
+        return res[0]?.map(t => t[0]).join("") || text;
+      } catch {
+        return text;
+      }
+    }
+    const imageResponse = await fetch(imageUrl);
+    const buffer = await imageResponse.buffer();
+    const base64Image = buffer.toString("base64");
+    const mimeType = imageResponse.headers.get("content-type") || "image/jpeg"; 
+    const url = "https://describe.pictures/api/task/describe/description";
+    const headers = {
+      "accept": "*/*",
+      "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+      "cache-control": "no-cache",
+      "content-type": "application/json",
+      "pragma": "no-cache",
+      "Referer": "https://describe.pictures/es",
+      "Referrer-Policy": "strict-origin-when-cross-origin"
+    };
+
+    const body = JSON.stringify({
+      image: `data:${mimeType};base64,${base64Image}`,
+      prompt: "describe"
+    });
+    const response = await fetch(url, { method: "POST", headers, body });
+    const result = await response.json();
+    let content = result?.data?.content || "";
+    if (lang !== "en") {
+      content = await translateText(content, lang);
+    }
+    return {
+      creator: "@Samush$_",
+      data: { desc: content }
+    };
+  } catch (error) {
+  }}
+  
+
+app.get('/starlight/describe-picture', async (req, res) => {
+    actualizarStats(req);
+    let url = req.query.url;
+    const lang = req.query.lang || "es";
+    if (!url) {
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(400).end(JSON.stringify({ error: true, message: "falta el parametro url" }, null, 2));
+    }
+    try {
+        const result = await DescribePicture(url, lang);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(result, null, 2));
+    } catch (error) {
+        res.setHeader('Content-Type', 'application/json');
+        res.status(500).end(JSON.stringify({ error: "://" }, null, 2));
+    }
+});  
+
 app.get('/starlight/instagram-dl', async (req, res) => {
     actualizarStats(req);
     const url = req.query.url;
@@ -3564,7 +3839,7 @@ app.get('/starlight/youtube-search', async (req, res) => {
 });
 
 
-/*app.get('/starlight/youtube-mp3', async (req, res) => {
+app.get('/starlight/youtube-mp3', async (req, res) => {
     actualizarStats(req);
     const url = req.query.url;
 
@@ -3573,35 +3848,15 @@ app.get('/starlight/youtube-search', async (req, res) => {
     }
 
     try {
-      const desiredQuality = "128kbps"; 
-        const result = await ytdls(url, desiredQuality);
+        const result = await ytdlsa(url);
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.status(200).send(JSON.stringify(result, null, 4));
     } catch (error) {
         res.status(500).json({ error: '://' });
     }
-});*/
-app.get('/starlight/youtube-mp3', async (req, res) => {
-    actualizarStats(req);
-    const url = req.query.url;
-     if (!url) {
-        return res.status(400).json({ error: 'falta el parametro url' });
-    }
-    try {
-        let data;
-        try {
-            data = await ytdls(url);
-        } catch (error) {
-            data = await ytdls(url);
-        }
-         res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.status(200).send(JSON.stringify(data, null, 4));
-    } catch (error) {
-         res.status(500).json({ error: '://' });
-    }
 });
+
 
 app.get('/starlight/youtube-mp4', async (req, res) => {
     const url = req.query.url;
@@ -3610,7 +3865,7 @@ app.get('/starlight/youtube-mp4', async (req, res) => {
         return res.status(400).json({ error: 'falta parametro url' });
     }
     try {
-        const result = await ytdls(url, desiredQuality);
+        const result = await ytdlsv(url, desiredQuality);
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.status(200).send(JSON.stringify(result, null, 4));
