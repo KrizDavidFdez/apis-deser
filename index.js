@@ -1962,7 +1962,7 @@ async function Igstorys(username) {
 
 async function ytdlsa(videoUrl) {
     try {
-        const response = await fetch("https://ytmp3.ing/audio", {
+        const response = await fetch("https://yt1s.ing/audio", {
             method: "POST",
             headers: {
                 "accept": "*/*",
@@ -2022,7 +2022,7 @@ async function ytdlsa(videoUrl) {
 
 async function ytdlsv(videoUrl) {
     try {
-        const response = await fetch("https://ytmp3.ing/video", {
+        const response = await fetch("https://yt1s.ing/video", {
             method: "POST",
             headers: {
                 "accept": "*/*",
@@ -2303,7 +2303,7 @@ app.listen(port, () => {
 const statsFilePath = path.join(__dirname, 'stats.json');
 
 if (!fs.existsSync(statsFilePath)) {
-    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 2559763 }));
+    fs.writeFileSync(statsFilePath, JSON.stringify({ requests: 2987773 }));
 }
 
 let stats = JSON.parse(fs.readFileSync(statsFilePath));
@@ -3077,6 +3077,60 @@ async function snap_search(text) {
   } catch (error) {
   }}
   
+  async function colorizeZai(img, ext = "jpg") {
+  try {
+    const fakeUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36";
+    const response = await fetch(img);
+    const imageBuffer = await response.buffer();
+    const form = new FormData();
+    form.append('image', imageBuffer, {
+      filename: 'image.jpg',
+      contentType: 'application/octet-stream'
+    });
+    form.append('renderFactor', '12');
+    form.append('requestId', 'random-request-id');
+    const apiResponse = await fetch('https://api.hotpot.ai/colorize-picture', {
+      method: 'POST',
+      headers: {
+        'accept': '*/*',
+        'authorization': 'hotpot-t2mJbCr8292aQzp8CnEPaK',
+        'User-Agent': fakeUserAgent,
+        ...form.getHeaders()
+      },
+      body: form
+    });
+    const processedImageBuffer = await apiResponse.buffer();
+    const formData = new FormData();
+    formData.append("file", processedImageBuffer, { filename: `cfs.${ext}` });
+
+    const uploadResponse = await fetch("https://tmpfiles.org/api/v1/upload", {
+      method: "POST",
+      body: formData,
+      headers: { "User-Agent": fakeUserAgent },
+    });
+
+    const uploadResult = await uploadResponse.json();
+    const originalURL = uploadResult?.data?.url;
+    const uploadedURL = originalURL ? `https://tmpfiles.org/dl/${originalURL.split("/").slice(-2).join("/")}` : "";
+    return { creator: "@Samush$_", url: uploadedURL };
+  } catch (error) {
+  }}
+  
+app.get('/starlight/colorize-ai', async (req, res) => {
+    actualizarStats(req);
+    const url = req.query.url;
+    if (!url) {
+        return res.status(400).json({ error: 'falta parametro url' })
+    }
+    try {
+        const result = await colorizeZai(url);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).send(JSON.stringify(result, null, 4));
+    } catch (error) {
+        res.status(500).json({ error: '://' });
+    }
+});
 
 app.get('/starlight/describe-picture', async (req, res) => {
     actualizarStats(req);
