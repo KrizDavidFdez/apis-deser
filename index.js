@@ -65,6 +65,36 @@ async function UploadEE(fileUrl) {
   }
 }
 
+async function AppleDL(appleMusicUrl) {
+  try {
+    const encodedUrl = encodeURIComponent(appleMusicUrl);
+    const infoRes = await axios.get(`https://apple-music-track.koyeb.app/api/apple-info?url=${encodedUrl}`, {
+      headers: {
+        'accept': 'application/json'
+      }
+    });
+    const trackInfo = infoRes.data;
+    const downloadRes = await axios.get(`https://apple-music-track.koyeb.app/api/apple-download?url=${encodedUrl}&quality=128`, {
+      headers: {
+        'accept': 'application/json'
+      }
+    });
+    return {
+      creator: "@Atem",
+      success: true,
+      title: trackInfo.title,
+      artist: trackInfo.artist,
+      image: trackInfo.imagen, 
+      created: trackInfo.fecha,
+      dl_url: `https://apple-music-track.koyeb.app${downloadRes.data.url}`
+    };
+
+  } catch (error) {
+    return { success: false, error: "://" };
+  }
+}
+
+/*
 async function AppleDL(urls) {
   const body = `------WebKitFormBoundary2kkVxp8sbzLPyeWd\r\nContent-Disposition: form-data; name="url"\r\n\r\n${urls}\r\n------WebKitFormBoundary2kkVxp8sbzLPyeWd\r\nContent-Disposition: form-data; name="_AMwUE"\r\n\r\n92c6f8727f94b2b2070680dc2502e89a\r\n------WebKitFormBoundary2kkVxp8sbzLPyeWd--\r\n`;
 
@@ -72,7 +102,7 @@ async function AppleDL(urls) {
     const response = await fetch(`https://aplmate.com/action`, {
       method: 'POST',
       headers: {
-        "accept": "*/*",
+        "accept": "",
         "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
         "content-type": "multipart/form-data; boundary=----WebKitFormBoundary2kkVxp8sbzLPyeWd",
         "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
@@ -105,7 +135,7 @@ async function AppleDL(urls) {
     const secondResponse = await fetch("https://aplmate.com/action/track", {
       method: 'POST',
       headers: {
-        "accept": "*/*",
+        "accept": "",
         "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
         "content-type": "multipart/form-data; boundary=----WebKitFormBoundarygHqj8sV7tdA1zw6U",
         "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
@@ -135,7 +165,7 @@ async function AppleDL(urls) {
     };
   } catch (error) {
   }}
-  
+  */
 
 async function fbdls(fblink) {
   try {
