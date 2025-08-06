@@ -1,92 +1,83 @@
-   window.onload = function() {
-            document.getElementById('shareCount').textContent = 17662;
-            let visitCount = localStorage.getItem('visits') ? parseInt(localStorage.getItem('visits')) : 476552;
-            visitCount++; 
-            localStorage.setItem('visits', visitCount);
-            document.getElementById('visitCount').textContent = visitCount; 
-            const totalInteractions = 17662 + visitCount; 
-            document.getElementById('totalCount').textContent = totalInteractions;
-            animateText();
-        }
-        const dropdownHeaders = document.querySelectorAll('.dropdown-header')
-        dropdownHeaders.forEach(header => {
-            header.addEventListener('click', function() {
-                const currentContent = this.nextElementSibling;
-                const isOpen = currentContent.style.display === 'block';
-                dropdownHeaders.forEach(otherHeader => {
-                    const otherContent = otherHeader.nextElementSibling;
-                    if (otherContent !== currentContent) {
-                        otherContent.style.display = 'none'; 
-                        otherHeader.classList.remove('open');
+const hackerText = document.getElementById("hackerText");
+const original = "REST APIS  ( 安吉拉和山姆 ）";
+
+const chars = "!@#$%^&*()_+-=[]{}|;:,.<>?/~";
+
+function hackerEffect(el, text, delay = 60) {
+    let currentIndex = 0;
+
+    function revealNextLetter() {
+        if (currentIndex >= text.length) return;
+
+        let iterations = 0;
+        const maxIterations = 10;
+
+        const scrambleInterval = setInterval(() => {
+            const scrambled = text
+                .split("")
+                .map((char, index) => {
+                    if (index < currentIndex) return char;
+                    if (index === currentIndex) {
+                        return chars[Math.floor(Math.random() * chars.length)];
                     }
-                });
-                if (isOpen) {
-                    currentContent.style.display = 'none'; 
-                    this.classList.remove('open');
-                } else {
-                    currentContent.style.display = 'block';
-                    this.classList.add('open');
-                }
-            });
-        });
+                    return "";
+                })
+                .join("");
 
-        function animateText() {
-            typeWriter("Starlights Apis", 5, () => {
-                setTimeout(() => {
-                    eraseText(() => {
-                        setTimeout(() => {
-                            typeWriter("Apis Simples xD", 4, () => {
-                                setTimeout(() => {
-                                    eraseText(() => {
-                                        setTimeout(() => {
-                                            typeWriter("Starlights Apis", 5);
-                                        }, 1000); 
-                                    });
-                                }, 2000); 
-                            });
-                        }, 1000); 
-                    });
-                }, 1000); 
-            });
-        }
+            el.innerText = scrambled;
 
-        function typeWriter(text, duration, callback) {
-            const textElement = document.getElementById('dynamicText');
-            let index = 0;
-            const interval = (duration * 1000) / (text.length * 3); 
-            textElement.textContent = ""; 
-            const writeInterval = setInterval(() => {
-                if (index < text.length) {
-                    textElement.textContent += text.charAt(index); 
-                    index++;
-                } else {
-                    clearInterval(writeInterval); 
-                    if (callback) callback();
-                }
-            }, interval);
-        }
+            iterations++;
+            if (iterations >= maxIterations) {
+                currentIndex++;
+                el.innerText = text.slice(0, currentIndex);
+                clearInterval(scrambleInterval);
+                setTimeout(revealNextLetter, delay); 
+            }
+        }, 30);
+    }
 
-        function eraseText(callback) {
-            const textElement = document.getElementById('dynamicText');
-            let index = textElement.textContent.length;
-            const interval = 50; 
-            const eraseInterval = setInterval(() => {
-                if (index > 0) {
-                    textElement.textContent = textElement.textContent.slice(0, index - 1);
-                    index--;
-                } else {
-                    clearInterval(eraseInterval); 
-                    if (callback) callback();
-                }
-            }, interval);
-        }
-     
- async function fetchStats() {
-    try {
-        const response = await fetch('/starlight/stats');
-        const data = await response.json()
-        document.getElementById('solicitudesCount').textContent = data.requests;
-    } catch (error) {
-    }}
-setInterval(fetchStats, 2000);
-fetchStats();
+    revealNextLetter();
+}
+
+window.onload = () => {
+    hackerEffect(hackerText, original);
+};
+  const text = `Welcome to this Simple Api
+  Here you can find variety
+  APIs available to you bot
+  Youtube, Spotify, Deezer`;
+
+const target = document.getElementById("typing-text");
+let i = 0;
+const speed = 80;
+
+const cursor = document.createElement("span");
+cursor.classList.add("cursor");
+target.appendChild(cursor);
+
+function typeChar() {
+  if (i < text.length) {
+    const char = document.createTextNode(text.charAt(i));
+    target.insertBefore(char, cursor);
+    i++;
+    setTimeout(typeChar, speed);
+  }
+}
+
+typeChar();
+
+function startLoading() {
+  const bar = document.getElementById('top-loader');
+  bar.style.width = '0%';
+  bar.style.display = 'block';
+  setTimeout(() => bar.style.width = '80%', 100);
+}
+
+function finishLoading() {
+  const bar = document.getElementById('top-loader');
+  bar.style.width = '100%';
+  setTimeout(() => {
+    bar.style.display = 'none';
+    bar.style.width = '0%';
+  }, 500);
+}
