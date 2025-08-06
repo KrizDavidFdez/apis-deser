@@ -2,306 +2,1442 @@
 <html lang="es">
 <head>
     <meta property="og:image" content="https://i.postimg.cc/rsVH98XY/image.jpg"> 
-  <link rel="shortcut icon" href="https://i.postimg.cc/qB6mz2ry/image.jpg"> 
+  <link rel="shortcut icon" href="https://i.postimg.cc/50V68vB4/rose.jpg"> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⦙𖹭⃨⃜⦙ㅤㅤ  📷 ㅤㅤ 𖧁𓍢ㅤ     ⍺𝗉ı𝗌 ㅤㅤ 조지나  𑪅ㅤㅤ𝗌꯭ƚ꯭⍺ꭇ𝗅ı꯭𝗀꯭𝗁ƚ꯭𝗌ㅤ ㅤ⠾⠾ㅤ ㅤ🗻ᩥㅤㅤ𓋜 𓉰𓉰ㅤㅤ  𝖽ᧉ  ㅤ  🔭ㅤ   H⍺𝗇𝗌ᨣ𝗀ㅤ   ◞◟</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet"> 
-    <link href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" rel="stylesheet"> 
-    <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet" />
+  <link href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">ñ
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="navbar">
-        <h2 style="margin: 0;">Rest Apis</h2>
-        <div class="navbar-right">
-            <img src="https://i.postimg.cc/BQDwwHw4/7.jpg" alt="Icono"> 
-            <span>By @Samush$_</span>
-        </div>
+  <div class="navbar">
+    <div class="hacker-text" id="hackerText">REST APIS</div>
+    <div class="navbar-right">
+      <img src="https://i.postimg.cc/nLCTnWVN/Jennie-2.jpg" alt="Perfil" />
+      <span>Atem</span>
     </div>
-    <div class="container">
-        <h1 id="dynamicText">Starlights Apis</h1>
-        <div class="animated-line"></div> 
-        <table id="sharesTable">
-            <thead>
-                <tr>
-                    <th><i class="uil uil-share"></i> Shares</th>
-                    <th id="shareCount">17662</th> 
-                </tr>
-            </thead>
-        </table>
-        <table id="visitsTable">
-            <thead>
-                <tr>
-                    <th><i class="uil uil-eye"></i> Visitas</th>
-                    <th id="visitCount">476552</th> 
-                </tr>
-            </thead>
-        </table>
- <table id="solicitudesTable">
-    <thead>
-        <tr>
-            <th><i class="uil uil-exchange"></i> Request</th> 
-            <th id="solicitudesCount">2.001.420</th>
-        </tr>
-    </thead>
-</table>
-        <div class="dropdown-container">
-            <div class="dropdown-header" id="dropdownHeader1">
-                Tools <span class="arrow">></span>
-            </div>
-            <div class="dropdown-content" id="dropdownContent1">
-<div class="dropdown-item">
-    <a href="/starlight/colorize-ai?url=https://i.postimg.cc/R0NCDSyL/8afb753a-6d93-4e28-8960-9ec3f2a22e6a.jpg">Colorize Ai</a>
+  </div>
+  <div class="main-content">
+    <div class="image-box">
+      <div class="image-overlay">Created By Atem</div>
+      <img src="https://i.postimg.cc/P562sHHm/b0574fb6-85fb-4ee6-b23c-ef0bc8cb62d0.jpg" alt="Imagen destacada" />
+    </div>
+    <div style="display: flex; justify-content: center;">
+  <div class="intro-text" id="typing-text"></div>
 </div>
-            <div class="dropdown-item">
-    <a href="/starlight/describe-picture?url=https://i.postimg.cc/V6zZwpyT/image.jpg&lang=es">Describe Picture Ai</a>
-</div>
-       <div class="dropdown-item">
-    <a href="/starlight/txt-to-image?text=Un+gato+persa">Text To Image</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/txt-to-image2?text=Un+gato">Text To Image 2</a>
-</div>
-           <div class="dropdown-item">
-    <a href="/starlight/shazam?url=https://www.tikwm.com//video/music/7357701403856342280.mp3">Shazam Recognize</a>
-</div>
-                        <div class="dropdown-item">
-    <a href="/starlight/loquendo?text=Hola&voice=Jorge">Voices Loquendo</a>
-</div>
-            <div class="dropdown-item">
-    <a href="/starlight/TikTok-Voices?text=Hola&voice=es_002">TikTok Voices</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/face-years?url=https://i.pinimg.com/736x/94/a1/40/94a140a66f96a79991b558d67dc446a1.jpg">Ai Years</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/face-similar?url=https://i.postimg.cc/tC9xK9j9/IMG-20240918-WA0059.jpg">Ai Similar</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/detect-faces?url=https://i.pinimg.com/736x/94/a1/40/94a140a66f96a79991b558d67dc446a1.jpg">Ai Face</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/gemini?text=Hola">Gemini</a>
-</div>
+  <div class="transparent-separator"></div> 
+<section class="wrapper">
+  <div class="container">
+    <div class="code-module">
+      <h2 class="module-title">Colorize Ai</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Revive image colors with AI 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/colorize-ai?url=https://i.postimg.cc/R0NCDSyL/8afb753a-6d93-4e28-8960-9ec3f2a22e6a.jpg" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+          <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
 
+axios.get('https://apis-starlights-team.koyeb.app/starlight/colorize-ai?url=https://i.postimg.cc/R0NCDSyL/8afb753a-6d93-4e28-8960-9ec3f2a22e6a.jpg')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+    <div class="code-module">
+      <h2 class="module-title">Describ Ai</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Describe images with artificial intelligence 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/describe-picture?url=https://i.postimg.cc/V6zZwpyT/image.jpg&lang=es" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
 
-<div class="dropdown-item">
-    <a href="/starlight/transcribir-youtube?url=https://youtube.com/watch?v=cNhXH1etCwM">Transcrip Youtube</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/turbo-ai?content=Actuaras+como+un+bot+de+WhatsApp&text=Quien+eres">Chatgpt Prompt</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/chatgpt?text=Hola+Chatgpt">Chatgpt 3.5</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/gemini?text=Hola">Gemini</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/blackbox?system=Eres+una+ai+llamada+blackbox&text=Que+dia+es+hoy+en+peru">BlackBox Ai</a>
-</div>
-            </div>
-            <div class="dropdown-header" id="dropdownHeader2">
-                Uploaders <span class="arrow">></span>
-            </div>
-            <div class="dropdown-content" id="dropdownContent2">
-<div class="dropdown-item">
-    <a href="/starlight/uploader-ee?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4">Uploader Ee</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/uploader-kitc?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4">Uploader Kitc</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/uploader-uguu?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4">Uploader Uguu</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/uploader-tmp?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4">Uploader Tmp</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/uploader-put?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4">Uploader Put</a>
-</div>
-         </div>            
-            <div class="dropdown-header" id="dropdownHeader2">
-                Stalker <span class="arrow">></span>
-            </div>
-            <div class="dropdown-content" id="dropdownContent2">
-<div class="dropdown-item">
-    <a href="/starlight/tweeter-stalk?text=Fernanfloo">Twitter Stalker</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/ig-stalk?text=Fernanfloo">Instagram Stalker</a>
-</div>
-         </div>
-            <div class="dropdown-header" id="dropdownHeader2">
-                Shorten <span class="arrow">></span>
-            </div>
-            <div class="dropdown-content" id="dropdownContent2">
-<div class="dropdown-item">
-    <a href="/starlight/shorten-n9cl?url=https://apis-starlights-team.koyeb.app/">Shorten n9cl</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/shorten-ouo?url=https://www.youtube.com/@samu_lssf">Shorten Ouo</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/shortenerme?url=https://www.youtube.com/@samu_lssf">Shortener me</a>
-</div>
+axios.get('https://apis-starlights-team.koyeb.app/starlight/describe-picture?url=https://i.postimg.cc/V6zZwpyT/image.jpg&lang=es')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Text To Image</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Generate AI-made images with your text 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/txt-to-image?text=Un+gato+persa" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
 
-<div class="dropdown-item">
-    <a href="/starlight/shorten-vurl?url=https://apis-starlights-team.koyeb.app/">Shorten vurl</a>
-</div>
-         </div>         
-            <div class="dropdown-header" id="dropdownHeader3">
-                Search <span class="arrow">></span>
-            </div>
-            <div class="dropdown-content" id="dropdownContent3">
-<div class="dropdown-item">
-    <a href="/starlight/Instagram-users?text=le+sserafim">Instagram Users</a>
-</div>            
-<div class="dropdown-item">
-    <a href="/starlight/youtube-search?text=Que+te+parece">Youtube Search</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/tweets-search?text=Cookie+Newjeans">Tweeter Search</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/ig-posts?text=le_sserafim">Instagram Posts</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/youtube-music-search?text=Que+te+parece">Youtube Music</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/zedge-rings-search?text=lofi">Zedge Ringtones</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/zedge-walls-search?text=Pokemon">Zedge Wallpapers</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/soundcloud-search?text=Que+te+parece">Soundcloud Search</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/pinterest-search?text=Ai+Hoshino">Pinterest Search</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/tiktoksearch?text=Que+te+parece">TikTok Search</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/Twitter-Posts?text=Minecraft">Twitter Search</a>
+axios.get('https://apis-starlights-team.koyeb.app/starlight/txt-to-image?text=Un+gato+persa')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Text To Image 2</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Generate AI-made images with your text 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/txt-to-image2?text=Un+gato" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/txt-to-image2?text=Un+gato')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Shazam Api</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Recognize the name of your music
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/shazam?url=https://www.tikwm.com//video/music/7357701403856342280.mp3" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/shazam?url=https://www.tikwm.com//video/music/7357701403856342280.mp3')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Voice Loquendo</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Convert your text to audio with crazy voice
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/loquendo?text=Hola&voice=Jorge" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/loquendo?text=Hola&voice=Jorge')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Voice Tiktok</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Use tiktok voices with text and voice id
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/TikTok-Voices?text=Hola&voice=es_002" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/TikTok-Voices?text=Hola&voice=es_002')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Face Year Ai</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Detect the age of the person in an image 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/face-years?url=https://i.pinimg.com/736x/94/a1/40/94a140a66f96a79991b558d67dc446a1.jpg" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/face-years?url=https://i.pinimg.com/736x/94/a1/40/94a140a66f96a79991b558d67dc446a1.jpg')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Face Ai</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Detect the resemblance in other people 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/detect-faces?url=https://i.pinimg.com/736x/94/a1/40/94a140a66f96a79991b558d67dc446a1.jpg" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/face-years?url=/starlight/detect-faces?url=https://i.pinimg.com/736x/94/a1/40/94a140a66f96a79991b558d67dc446a1.jpg')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Gemini Ai</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Interact with Google Gemini AI
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/gemini?text=Hola" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/gemini?text=Hola')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Transcript YouTube</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+transcribe Youtube videos or songs 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/transcribir-youtube?url=https://youtube.com/watch?v=cNhXH1etCwM" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/transcribir-youtube?url=https://youtube.com/watch?v=cNhXH1etCwM')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Chatgpt System</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Make AI act the way you want it to
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/turbo-ai?content=Actuaras+como+un+bot+de+WhatsApp&text=Quien+eres" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/turbo-ai?content=Actuaras+como+un+bot+de+WhatsApp&text=Quien+eres')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Chatgpt 3.5</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Interact with ChatGPT version 3.5 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/chatgpt?text=Hola+Chatgpt" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/chatgpt?text=Hola+Chatgpt')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">BlackBox AI</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+interact with Blackbox AI
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/blackbox?system=Eres+una+ai+llamada+blackbox&text=Que+dia+es+hoy+en+peru" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/blackbox?system=Eres+una+ai+llamada+blackbox&text=Que+dia+es+hoy+en+peru')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Uploader ee</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Convert your videos or audios to Url
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/uploader-ee?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/uploader-ee?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Uploader Kitc</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Convert your videos or audios to Url
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/uploader-kitc?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/uploader-kitc?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Uploader Uguu</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Convert your videos or audios to Url
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/uploader-uguu?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/uploader-uguu?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Uploader Tmp</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Convert your videos or audios to Url
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/uploader-tmp?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/uploader-tmp?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Uploader Put</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Convert your videos or audios to Url
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/uploader-put?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/uploader-put?url=https://www.tikwm.com//video/media/hdplay/7357701403856342280.mp4')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Shorten n9cl</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Shorten the URLs you enter
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/shorten-n9cl?url=https://apis-starlights-team.koyeb.app/" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/shorten-n9cl?url=https://apis-starlights-team.koyeb.app/')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Shorten Me</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Shorten the URLs you enter
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/shortenerme?url=https://www.youtube.com/@samu_lssf" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/shortenerme?url=https://www.youtube.com/@samu_lssf')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
             </div>
   </div>
-            <div class="dropdown-header" id="dropdownHeader4">
-                Downloaders <span class="arrow">></span>
-            </div>
-            <div class="dropdown-content" id="dropdownContent4">
-<div class="dropdown-item">
-    <a href="/starlight/instagram-dl?url=https://www.instagram.com/reel/DCyUzQlORdC/?igsh=a3Y5dmpiOGlhdWt6">Instagram  Dl</a>
-</div>                      
-<div class="dropdown-item">
-    <a href="/starlight/twitter-dl?url=https://x.com/freejeanz/status/1894814552120050056/video/1">Twitter  Dl</a>
-</div>            
-<div class="dropdown-item">
-    <a href="/starlight/youtube-mp3?url=https://youtu.be/_QGIzmtIr3E?si=0KMj3fVRoti6SMBP">Youtube Mp3</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/youtube-mp4?url=https://youtu.be/kbEC-AGr9n0?si=9F6gSVBMWD5Z8IGT">Youtube Mp4</a>
-</div>
-                        <div class="dropdown-item">
-    <a href="/starlight/ig-story?user=le_sserafim">Ig Story</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/soundcloud-playlist?url=https://on.soundcloud.com/h4Gnvqwnf7fr9SH56">Soundcloud Playlist</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/youtube-playlist?url=https://youtube.com/playlist?list=PLWVo2tank-zzCWQ4dfIwZAAGqUEDY1Mxv&si=CQPXZkGhsbafovfp">Youtube Playlist</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/apple-music?url=https://music.apple.com/us/album/carpediem-feat-trapzongo-single/1597762640">Apple Music</a>
-</div>
-            <div class="dropdown-item">
-    <a href="/starlight/vimeo-DL?url=https://vimeo.com/1016761254">Vimeo DL</a>
-</div>
-              <div class="dropdown-item">
-    <a href="/starlight/capcut-DL?url=https://www.capcut.com/t/ZmFg1UAy7/">Capcut DL</a>
-</div>
-                <div class="dropdown-item">
-    <a href="/starlight/threads-DL?url=https://www.threads.net/@soyaa.hw/post/DBRILEWOKc9?xmt=DAQGzWjBQvLI1eZ6eAkWKyptdNqIC2QyZlitAZYkhJdSqTw">Threads DL</a>
-</div>
-            <div class="dropdown-item">
-    <a href="/starlight/spotify-albums-list?url=https://open.spotify.com/album/5L5evi5tJPh8WaEFAQp7Tp?si=FSTAqscuSYeiO4b0G1zNhg&context=spotify%3Aalbum%3A5L5evi5tJPh8WaEFAQp7Tp">Spotify/Album/Playlists</a>
-</div>
-            <div class="dropdown-item">
-    <a href="/starlight/snapchat-DL?url=https://snapchat.com/t/POlO5f5Z">Snapchat DL</a>
-</div>
-                <div class="dropdown-item">
-    <a href="/starlight/pornhubdl?url=https://es.pornhub.com/view_video.php?viewkey=66b5d85a21b66">Pornhubdl</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/tiktok-images?url=https://vm.tiktok.com/ZMhFrUskN/">TikTok Images</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/facebook?url=https://www.facebook.com/100007758586053/videos/2933875396881051/?mibextid=rS40aB7S9Ucbxw6v">Facebook DL</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/tiktok-user-posts?user=@pupuchae">TikTok UserVideos</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/spotifydl?url=https://open.spotify.com/track/1fyTYUp98FOdBKPDnFlANs?si=OxtmMRKsQ7W9ssuUCsJUfg">SpotifyDL</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/hentaicity?url=https://www.hentaicity.com/video/married-woman-is-inevitably-stolen-1-married-woman-gets-fucked-by-dirty-old-man-at-work-ssetrMw8sP4.html">HentaicityDL</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/terabox-dl?url=https://1024terabox.com/s/1dFpKNYAjw2XcZjFZeCcS5A">TeraboxDL</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/tiktok-trends?region=PE">Trends TikTok</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/zedge-dl?url=https://www.zedge.net/ringtone/d0d0996d-7974-480b-857f-f8e45805fc81">Zedge</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/Ifunny-dl?text=https://ifunny.co/video/sHbRld9F9?s=cl">IfunnyDL</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/mangadl?url=https://ver.notasanime.me/2024/04/kanojo-okarishimasu-manga-329-espanol.html?m=1">Mangas</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/pindl?url=https://es.pinterest.com/pin/711568809907536679/">Pinterest</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/chochox?url=https://chochox.com/my-new-neighbor-mimic-yous/">ChoChox</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/tiktok?url=https://vm.tiktok.com/ZMhF6DMEH/">TikTok</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/like-downloader?url=https://l.likee.video/v/E4JSK7">Likee DL</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/soundcloud?url=https://on.soundcloud.com/KtxsK59Q6FQNQqKm6">SoundCloud</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/instagram-DL?url=https://www.instagram.com/p/DA2fqkMTxd6/?igsh=OTJlaGJxc25iZzF4">Instagram</a>
-</div>
-<div class="dropdown-item">
-    <a href="/starlight/tiktok2?url=https://vm.tiktok.com/ZMhFrtYNM/">TikTok 2</a>
-</div>                      
-            </div>
+      <div class="code-module">
+      <h2 class="module-title">Shorten Vurl</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Shorten the URLs you enter
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/shorten-vurl?url=https://apis-starlights-team.koyeb.app/" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/shorten-vurl?url=https://apis-starlights-team.koyeb.app/')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
         </div>
-    </div>
-    <div class="social-bar">
-        <a href="https://github.com/HanSamu-27" target="_blank"><i class="uil uil-github"></i></a>
-        <a href="https://youtube.com/@samu_lssf?feature=shared" target="_blank"><i class="uil uil-youtube"></i></a>
-        <a href="https://wa.me/+5219983369376" target="_blank"><i class="uil uil-whatsapp"></i></a>
-    </div>
- <script src="/js/script.js"></script>
+      </article> 
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Youtube Search</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Get the result of your song or video
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/youtube-search?text=Que+te+parece" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/youtube-search?text=Que+te+parece')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Twitter Search</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Search for videos on Twitter from the API
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/tweets-search?text=Cookie+Newjeans" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/tweets-search?text=Cookie+Newjeans')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Insta Posts</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Get Instagram Image Posts
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/ig-posts?text=le_sserafim" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/ig-posts?text=le_sserafim')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article> 
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Souncloud Search</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Search for the song on soundcloud 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/soundcloud-search?text=Que+te+parece" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/soundcloud-search?text=Que+te+parece')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Pinterest Search</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Search for your image on pinterest 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/pinterest-search?text=Jennie+BlackPink" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/pinterest-search?text=Lisa')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Tiktok Search</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Search videos on Tiktok 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/tiktoksearch?text=Que+te+parece" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/tiktoksearch?text=Que+te+parece')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Twitter Posts</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Search for Twitter posts 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/Twitter-Posts?text=Minecraft" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/Twitter-Posts?text=Minecraft')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Instagram DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download videos or images on Instagram  
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/instagram-dl?url=https://www.instagram.com/reel/DCyUzQlORdC/?igsh=a3Y5dmpiOGlhdWt6" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/instagram-dl?url=https://www.instagram.com/reel/DCyUzQlORdC/?igsh=a3Y5dmpiOGlhdWt6')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Twitter DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download videos or images on Twitter  
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/twitter-dl?url=https://x.com/freejeanz/status/1894814552120050056/video/1" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/twitter-dl?url=https://x.com/freejeanz/status/1894814552120050056/video/1')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">YTMP3 DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download only audios from Youtube 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/youtube-mp3?url=https://youtu.be/_QGIzmtIr3E?si=0KMj3fVRoti6SMBP" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/youtube-mp3?url=https://youtu.be/_QGIzmtIr3E?si=0KMj3fVRoti6SMBP')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">YTMP4 DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download Youtube videos and audios 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/youtube-mp4?url=https://youtu.be/kbEC-AGr9n0?si=9F6gSVBMWD5Z8IGT" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/youtube-mp4?url=https://youtu.be/kbEC-AGr9n0?si=9F6gSVBMWD5Z8IGT')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Soundcloud Playlist</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download playlists or albums from soundcloud 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/soundcloud-playlist?url=https://on.soundcloud.com/h4Gnvqwnf7fr9SH56" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/soundcloud-playlist?url=https://on.soundcloud.com/h4Gnvqwnf7fr9SH56')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Youtube Playlist</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Get YouTube Playlist results 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/youtube-playlist?url=https://youtube.com/playlist?list=PLWVo2tank-zzCWQ4dfIwZAAGqUEDY1Mxv&si=CQPXZkGhsbafovfp" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/youtube-playlist?url=https://youtube.com/playlist?list=PLWVo2tank-zzCWQ4dfIwZAAGqUEDY1Mxv&si=CQPXZkGhsbafovfp')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Apple Music</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download songs to AppleMusic
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/apple-music?url=https://music.apple.com/us/album/carpediem-feat-trapzongo-single/1597762640" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/apple-music?url=https://music.apple.com/us/album/carpediem-feat-trapzongo-single/1597762640')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Threads DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download images or videos from Threads
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/threads-DL?url=https://www.threads.net/@soyaa.hw/post/DBRILEWOKc9?xmt=DAQGzWjBQvLI1eZ6eAkWKyptdNqIC2QyZlitAZYkhJdSqTw" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/threads-DL?url=https://www.threads.net/@soyaa.hw/post/DBRILEWOKc9?xmt=DAQGzWjBQvLI1eZ6eAkWKyptdNqIC2QyZlitAZYkhJdSqTw')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Spotify Playlist</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Get info about the playslit or album
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/spotify-albums-list?url=https://open.spotify.com/album/5L5evi5tJPh8WaEFAQp7Tp?si=FSTAqscuSYeiO4b0G1zNhg&context=spotify%3Aalbum%3A5L5evi5tJPh8WaEFAQp7Tp" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/spotify-albums-list?url=https://open.spotify.com/album/5L5evi5tJPh8WaEFAQp7Tp?si=FSTAqscuSYeiO4b0G1zNhg&context=spotify%3Aalbum%3A5L5evi5tJPh8WaEFAQp7Tp')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Snapchat DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download Snapchat videos 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/snapchat-DL?url=https://snapchat.com/t/POlO5f5Z" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/snapchat-DL?url=https://snapchat.com/t/POlO5f5Z')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Pornhub DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download Pornhub Videos
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/pornhubdl?url=https://es.pornhub.com/view_video.php?viewkey=66b5d85a21b66" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/pornhubdl?url=https://es.pornhub.com/view_video.php?viewkey=66b5d85a21b66')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Tiktok Images</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download images from Tiktok
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/tiktok-images?url=https://vm.tiktok.com/ZMhFrUskN/" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/tiktok-images?url=https://vm.tiktok.com/ZMhFrUskN/')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Facebook DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download Facebook Videos
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/facebook?url=https://www.facebook.com/100007758586053/videos/2933875396881051/?mibextid=rS40aB7S9Ucbxw6v" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/facebook?url=https://www.facebook.com/100007758586053/videos/2933875396881051/?mibextid=rS40aB7S9Ucbxw6v')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">TiktokVid User</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Downloads videos from tiktok user
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/tiktok-user-posts?user=@pupuchae" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/tiktok-user-posts?user=@pupuchae')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Spotify DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download Spotify Songs 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/spotifydl?url=https://open.spotify.com/track/1fyTYUp98FOdBKPDnFlANs?si=OxtmMRKsQ7W9ssuUCsJUfg" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/spotifydl?url=https://open.spotify.com/track/1fyTYUp98FOdBKPDnFlANs?si=OxtmMRKsQ7W9ssuUCsJUfg')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Hentaicity DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download videos on Hentaicity
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/hentaicity?url=https://www.hentaicity.com/video/married-woman-is-inevitably-stolen-1-married-woman-gets-fucked-by-dirty-old-man-at-work-ssetrMw8sP4.html" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/hentaicity?url=https://www.hentaicity.com/video/married-woman-is-inevitably-stolen-1-married-woman-gets-fucked-by-dirty-old-man-at-work-ssetrMw8sP4.html')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+                </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Terabox DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download files in terabox
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/terabox-dl?url=https://1024terabox.com/s/1dFpKNYAjw2XcZjFZeCcS5A" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/terabox-dl?url=https://1024terabox.com/s/1dFpKNYAjw2XcZjFZeCcS5A')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">TiktokTrends DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download tiktok trends 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/tiktok-trends?region=PE" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/tiktok-trends?region=PE')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Zedge DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download audios, videos, notifications, from zedge
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/zedge-dl?url=https://www.zedge.net/ringtone/d0d0996d-7974-480b-857f-f8e45805fc81" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/zedge-dl?url=https://www.zedge.net/ringtone/d0d0996d-7974-480b-857f-f8e45805fc81')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Ifunny DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download videos or images from Ifunny
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/Ifunny-dl?text=https://ifunny.co/video/sHbRld9F9?s=cl" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/Ifunny-dl?text=https://ifunny.co/video/sHbRld9F9?s=cl1')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Manga DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download Manga from the page notasanime
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/mangadl?url=https://ver.notasanime.me/2024/04/kanojo-okarishimasu-manga-329-espanol.html?m=1" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/mangadl?url=https://ver.notasanime.me/2024/04/kanojo-okarishimasu-manga-329-espanol.html?m=1')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Pinterest DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download images and videos from pinterest
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/pindl?url=https://es.pinterest.com/pin/711568809907536679/" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/pindl?url=https://es.pinterest.com/pin/711568809907536679/')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Chochox DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download chochox comic 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/chochox?url=https://chochox.com/my-new-neighbor-mimic-yous/" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/chochox?url=https://chochox.com/my-new-neighbor-mimic-yous/')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+           </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Tiktok DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download Tiktok videos
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/tiktok?url=https://vm.tiktok.com/ZMhF6DMEH/" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/tiktok?url=https://vm.tiktok.com/ZMhF6DMEH/')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>    
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Likee DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download Likee videos
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/like-downloader?url=https://l.likee.video/v/E4JSK7" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/like-downloader?url=https://l.likee.video/v/E4JSK7')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>     
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Soundcloud DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download songs from soundcloud 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/soundcloud?url=https://on.soundcloud.com/KtxsK59Q6FQNQqKm6" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/soundcloud?url=https://on.soundcloud.com/KtxsK59Q6FQNQqKm6')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>
+          </div>
+  </div>
+      <div class="code-module">
+      <h2 class="module-title">Tiktok2 DL</h2>
+      <div class="module-underline"></div>
+      <p class="module-description">
+Download tiktok videos 
+      </p>
+      <article class="content code-example">
+        <div class="browser">
+          <div class="browser__toolbar">
+            <span class="toolbar__control"></span>
+            <a class="get-button" href="/starlight/tiktok2?url=https://vm.tiktok.com/ZMhFrtYNM/" target="_blank">GET</a>
+            <i class="icon fa fa-code" aria-hidden="true"></i>
+          </div>
+        <div class="browser__body">
+            <pre><code class="js">const axios = require('axios')
+
+axios.get('https://apis-starlights-team.koyeb.app/starlight/tiktok2?url=https://vm.tiktok.com/ZMhFrtYNM/')
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err))
+</code></pre>
+          </div>
+        </div>
+      </article>            
+</section>
+  <div class="social-bar">
+    <a href="https://github.com/HanSamu-27" target="_blank"><i class="uil uil-github"></i></a>
+    <a href="https://youtube.com/@samu_lssf?feature=shared" target="_blank"><i class="uil uil-youtube"></i></a>
+    <a href="https://wa.me/+5219983369376" target="_blank"><i class="uil uil-whatsapp"></i></a>
+  </div>
+  <script src="/js/script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-                
