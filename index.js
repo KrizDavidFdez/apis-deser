@@ -2050,65 +2050,55 @@ async function ytdlsa(videoUrl) {
 } catch (error) {
 }}
 
-async function ytdlsv(videoUrl) {
+async function ytdlsv(youtubeUrl) {
+    const headers = {
+        "accept": "*/*",
+        "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
+        "cache-control": "no-cache",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "x-requested-with": "XMLHttpRequest",
+        "Referer": "https://url-shortener.me/",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+    };
     try {
-        const response = await fetch("https://yt1s.ing/video", {
-            method: "POST",
-            headers: {
-                "accept": "*/*",
-                "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
-                "cache-control": "no-cache",
-                "content-type": "multipart/form-data; boundary=----WebKitFormBoundary6bigBzTDfo8rsAUR",
-                "pragma": "no-cache",
-                "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
-                "sec-ch-ua-mobile": "?1",
-                "sec-ch-ua-platform": "\"Android\"",
-                "sec-fetch-dest": "empty",
-                "sec-fetch-mode": "cors",
-                "sec-fetch-site": "same-origin",
-                "x-csrftoken": "YtkPVWoUBsiXW5i1LYLtVgwUWDOCmmgDPUypyLlig5W9Q0M4PaSbD8WBTRoGfkEj",
-                "cookie": "csrftoken=1BoKNZ7yPNOm45EdemhSS2AR7oKe38yQ",
-                "Referer": "https://ytmp3.ing/",
-                "Referrer-Policy": "same-origin"
-            },
-            body: `------WebKitFormBoundary6bigBzTDfo8rsAUR\r\nContent-Disposition: form-data; name="url"\r\n\r\n${videoUrl}\r\n------WebKitFormBoundary6bigBzTDfo8rsAUR--\r\n`
-        });
-        const audioData = await response.json();
-        const oembedResponse = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`, {
-            headers: {
-                "accept": "*/*",
-                "accept-language": "es-US,es-419;q=0.9,es;q=0.8",
-                "cache-control": "no-cache",
-                "pragma": "no-cache",
-                "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
-                "sec-ch-ua-mobile": "?1",
-                "sec-ch-ua-platform": "\"Android\"",
-                "sec-fetch-dest": "empty",
-                "sec-fetch-mode": "cors",
-                "sec-fetch-site": "cross-site",
-                "Referer": "https://y2meta.mobi/",
-                "Referrer-Policy": "strict-origin-when-cross-origin"
-            },
-            method: "GET"
-        });
+        const apiUrl = `https://api.vidfly.ai/api/media/youtube/download?url=${encodeURIComponent(youtubeUrl)}`;
+        const response = await fetch(apiUrl);
+        const result = await response.json();
+        const { title, duration, cover, items } = result.data;
+        const formatosFiltrados = items.filter(item => 
+            item.type === 'video_with_audio' && item.ext
+        )
+        if (formatosFiltrados.length > 0) {
+            const item = formatosFiltrados[0];
+            const body = `url=${encodeURIComponent(item.url)}`;
+            const shortResponse = await fetch("https://url-shortener.me/Home/ShortURL", {
+                method: "POST",
+                headers,
+                body
+            });
+            const shortResult = await shortResponse.json();
 
-        const oembedData = await oembedResponse.json();
-        async function shortlink(url) {
-        const response = await axios.get(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
-        return response.data;
-    }
-    const tinyUrl = await shortlink(audioData.url);
-        return {
-            creator: "@Samush$_",
-            data: {
-                title: oembedData.title,
-                author: oembedData.author_name,
-                thumbnail: oembedData.thumbnail_url,
-                dl_url: tinyUrl
-            }
+            return {
+                creator: "@Atem  .",
+                title: title,
+                duration: `${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`,
+                thumbnail: cover,
+                type: item.ext,
+                url: shortResult.shortedURL || "", 
+            };
+        } else {
+            return null; 
         }
-} catch (error) {
-}}
+    } catch (error) {
+    }}
+
 /*async function ytdls(youtubeUrl) {
     try {
         const encodedUrl = encodeURIComponent(youtubeUrl);
