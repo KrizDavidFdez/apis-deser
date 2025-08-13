@@ -86,7 +86,7 @@ async function AppleDL(appleMusicUrl) {
       artist: trackInfo.artist,
       image: trackInfo.imagen, 
       created: trackInfo.fecha,
-      dl_url: `https://apple-music-track.koyeb.app${downloadRes.data.url}`
+      dl_url: `https://apple-music-production-9d9e.up.railway.app${downloadRes.data.url}`
     };
 
   } catch (error) {
