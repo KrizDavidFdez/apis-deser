@@ -68,13 +68,13 @@ async function UploadEE(fileUrl) {
 async function AppleDL(appleMusicUrl) {
   try {
     const encodedUrl = encodeURIComponent(appleMusicUrl);
-    const infoRes = await axios.get(`https://apple-music-production-9d9e.up.railway.app/api/apple-info?url=${encodedUrl}`, {
+    const infoRes = await axios.get(`https://apple-music-production-f6e5.up.railway.app/api/apple-info?url=${encodedUrl}`, {
       headers: {
         'accept': 'application/json'
       }
     });
     const trackInfo = infoRes.data;
-    const downloadRes = await axios.get(`https://apple-music-production-9d9e.up.railway.app/api/apple-download?url=${encodedUrl}&quality=128`, {
+    const downloadRes = await axios.get(`https://apple-music-production-f6e5.up.railway.app/api/apple-download?url=${encodedUrl}&quality=128`, {
       headers: {
         'accept': 'application/json'
       }
@@ -86,7 +86,7 @@ async function AppleDL(appleMusicUrl) {
       artist: trackInfo.artist,
       image: trackInfo.imagen, 
       created: trackInfo.fecha,
-      dl_url: `https://apple-music-production-9d9e.up.railway.app${downloadRes.data.url}`
+      dl_url: `https://apple-music-production-f6e5.up.railway.app0${downloadRes.data.url}`
     };
 
   } catch (error) {
