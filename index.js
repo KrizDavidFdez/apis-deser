@@ -68,13 +68,13 @@ async function UploadEE(fileUrl) {
 async function AppleDL(appleMusicUrl) {
   try {
     const encodedUrl = encodeURIComponent(appleMusicUrl);
-    const infoRes = await axios.get(`https://apple-music-track.koyeb.app/api/apple-info?url=${encodedUrl}`, {
+    const infoRes = await axios.get(`https://apple-music-production-9d9e.up.railway.app/api/apple-info?url=${encodedUrl}`, {
       headers: {
         'accept': 'application/json'
       }
     });
     const trackInfo = infoRes.data;
-    const downloadRes = await axios.get(`https://apple-music-track.koyeb.app/api/apple-download?url=${encodedUrl}&quality=128`, {
+    const downloadRes = await axios.get(`https://apple-music-production-9d9e.up.railway.app/api/apple-download?url=${encodedUrl}&quality=128`, {
       headers: {
         'accept': 'application/json'
       }
